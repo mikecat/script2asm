@@ -256,9 +256,9 @@ bool doConnect) {
 				for(;i<length && (isalnum(expr[i]) || expr[i]=='_');i++);
 				nowIdentifier=expr.substr(ii,i-ii);
 				if(identifiers.find(nowIdentifier)!=identifiers.end()) {
-					exprStack.push_back(new ExprNode(OP_VALUABLE,
-						identifiers.at(nowIdentifier).id,
-						identifiers.at(nowIdentifier).param));
+					exprStack.push_back(
+						new ExprNode(OP_VALUABLE,identifiers.at(nowIdentifier))
+					);
 					prevIsNumber=true;
 				} else {
 					throw ERROR_UNKNOWN_IDENTIFIER;

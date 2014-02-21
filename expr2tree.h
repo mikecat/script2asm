@@ -33,6 +33,7 @@ provided that the following conditions are met:
 #include <vector>
 #include <map>
 #include <string>
+#include "identifier_info.h"
 
 namespace Expr2tree {
 
@@ -99,22 +100,15 @@ struct ExprNode;
 typedef std::vector<ExprNode*> ExprList;
 
 struct ExprNode {
-	OperatorType type;
-	int param1,param2;
+	OperatorType opType;
+	int intValue;
+	IdentifierInfo idInfo;
 	ExprList childNodes;
-	ExprNode(): type(OP_INVALID),param1(0),param2(0) {}
-	ExprNode(OperatorType t): type(t),param1(0),param2(0) {}
-	ExprNode(OperatorType t,int p1): type(t),param1(p1),param2(0) {}
-	ExprNode(OperatorType t,int p1,int p2): type(t),param1(p1),param2(p2) {}
+	ExprNode(): opType(OP_INVALID),intValue(0) {}
+	ExprNode(OperatorType t): opType(t),intValue(0) {}
+	ExprNode(OperatorType t,int iv): opType(t),intValue(iv) {}
+	ExprNode(OperatorType t,const IdentifierInfo& it): opType(t),intValue(0),idInfo(it) {}
 	~ExprNode();
-};
-
-struct IdentifierInfo {
-	int id;
-	int param;
-	IdentifierInfo(): id(0),param(0) {}
-	IdentifierInfo(int i): id(i),param(0) {}
-	IdentifierInfo(int i,int p): id(i),param(p) {}
 };
 
 typedef std::map<std::string,IdentifierInfo> IdentifierMap;
