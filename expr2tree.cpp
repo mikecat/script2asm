@@ -271,6 +271,7 @@ bool doConnect) {
 				if(prevIsNumber)throw ERROR_UNEXPECTED_NUMBER;
 				int now=0;
 				int base=10;
+				bool signedFlag=true;
 				if(nowExpr=='0' && i<length-1) {
 					i++;
 					if(expr[i]=='x') {
@@ -292,9 +293,13 @@ bool doConnect) {
 						break;
 					}
 				}
+				if(i<length && (expr[i]=='u' || expr[i]=='U')) {
+					signedFlag=false;
+					i++;
+				}
 				exprStack.push_back(new ExprNode(OP_NUMBER,
 					IdentifierInfo::makeIntegerLiteral(
-						now,DataType::createInteger(2,true)
+						now,DataType::createInteger(2,signedFlag)
 					)
 				));
 				prevIsNumber=true;
