@@ -82,8 +82,8 @@ void initPrint(void) {
 	op2str[OP_CONNECT]=",";
 
 	id2str[IDENTIFIER_FUNCTION]="関数";
-	id2str[IDENTIFIER_GLOBAL_VALUE]="グローバル変数";
-	id2str[IDENTIFIER_LOCAL_VALUE]="ローカル変数";
+	id2str[IDENTIFIER_GLOBAL_VARIABLE]="グローバル変数";
+	id2str[IDENTIFIER_LOCAL_VARIABLE]="ローカル変数";
 	id2str[IDENTIFIER_INTEGER_LITERAL]="整数リテラル";
 	id2str[IDENTIFIER_STRING_LITERAL]="文字列リテラル";
 }
@@ -96,7 +96,7 @@ void printExprList(const ExprList& exl,int level=0) {
 		if(en.opType==OP_IDENTIFIER) {
 			printf(" %s",id2str[en.idInfo.getType()].c_str());
 			if(en.idInfo.getType()==IDENTIFIER_FUNCTION ||
-			en.idInfo.getType()==IDENTIFIER_GLOBAL_VALUE) {
+			en.idInfo.getType()==IDENTIFIER_GLOBAL_VARIABLE) {
 				printf(" %s",en.idInfo.getName().c_str());
 			} else if(en.idInfo.getType()==IDENTIFIER_STRING_LITERAL) {
 				printf(" \"%s\"",en.idInfo.getName().c_str());

@@ -36,8 +36,8 @@ provided that the following conditions are met:
 
 enum IdentifierType {
 	IDENTIFIER_FUNCTION, // 関数
-	IDENTIFIER_GLOBAL_VALUE, // グローバル変数
-	IDENTIFIER_LOCAL_VALUE, // ローカル変数・引数
+	IDENTIFIER_GLOBAL_VARIABLE, // グローバル変数
+	IDENTIFIER_LOCAL_VARIABLE, // ローカル変数・引数
 	IDENTIFIER_INTEGER_LITERAL, // 整数リテラル
 	IDENTIFIER_STRING_LITERAL // 文字列リテラル
 };
@@ -57,10 +57,10 @@ class IdentifierInfo {
 		IdentifierInfo(IdentifierType t,const std::string& sv):
 			type(t),iValue(0),sValue(sv) {}
 	public:
-		IdentifierInfo(): type(IDENTIFIER_LOCAL_VALUE),iValue(0),sValue("") {}
+		IdentifierInfo(): type(IDENTIFIER_LOCAL_VARIABLE),iValue(0),sValue("") {}
 
-		static IdentifierInfo makeLocalValue(int offset,const DataType& type);
-		static IdentifierInfo makeGlobalValue(const std::string& name,const DataType& type);
+		static IdentifierInfo makeLocalVariable(int offset,const DataType& type);
+		static IdentifierInfo makeGlobalVariable(const std::string& name,const DataType& type);
 		static IdentifierInfo makeFunction(
 			const std::string& name,const std::vector<DataType>& typeList);
 		static IdentifierInfo makeIntegerLiteral(int value,const DataType& type);

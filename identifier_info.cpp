@@ -29,15 +29,15 @@ provided that the following conditions are met:
 
 #include "identifier_info.h"
 
-IdentifierInfo IdentifierInfo::makeLocalValue(int offset,const DataType& type) {
-	IdentifierInfo ret(IDENTIFIER_LOCAL_VALUE,offset);
+IdentifierInfo IdentifierInfo::makeLocalVariable(int offset,const DataType& type) {
+	IdentifierInfo ret(IDENTIFIER_LOCAL_VARIABLE,offset);
 	ret.valueType.push_back(type);
 	return ret;
 }
 
-IdentifierInfo IdentifierInfo::makeGlobalValue(
+IdentifierInfo IdentifierInfo::makeGlobalVariable(
 const std::string& name,const DataType& type) {
-	IdentifierInfo ret(IDENTIFIER_GLOBAL_VALUE,name);
+	IdentifierInfo ret(IDENTIFIER_GLOBAL_VARIABLE,name);
 	ret.valueType.push_back(type);
 	return ret;
 }
