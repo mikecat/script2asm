@@ -94,11 +94,11 @@ void printExprList(const ExprList& exl,int level=0) {
 		for(int i=0;i<level;i++)fputs("  ",stdout);
 		printf("operator %d (%s)",(int)en.opType,op2str[en.opType].c_str());
 		if(en.opType==OP_IDENTIFIER) {
-			printf(" %s",id2str[en.idInfo.getType()].c_str());
-			if(en.idInfo.getType()==IDENTIFIER_FUNCTION ||
-			en.idInfo.getType()==IDENTIFIER_GLOBAL_VARIABLE) {
+			printf(" %s",id2str[en.idInfo.getIdentifierType()].c_str());
+			if(en.idInfo.getIdentifierType()==IDENTIFIER_FUNCTION ||
+			en.idInfo.getIdentifierType()==IDENTIFIER_GLOBAL_VARIABLE) {
 				printf(" %s",en.idInfo.getName().c_str());
-			} else if(en.idInfo.getType()==IDENTIFIER_STRING_LITERAL) {
+			} else if(en.idInfo.getIdentifierType()==IDENTIFIER_STRING_LITERAL) {
 				printf(" \"%s\"",en.idInfo.getName().c_str());
 			} else {
 				printf(" %d",en.idInfo.getValue());

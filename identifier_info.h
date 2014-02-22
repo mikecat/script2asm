@@ -44,23 +44,23 @@ enum IdentifierType {
 
 class IdentifierInfo {
 	private:
-		IdentifierType type;
+		IdentifierType idType;
 		// ローカル変数・引数では%bpからのオフセット
 		// 整数リテラルではその値
-		int iValue; 
+		int intValue; 
 		// グローバル変数・関数では名前
 		// 文字列リテラルではその文字列
-		std::string sValue;
+		std::string strValue;
 		// 型
 		DataType valueType;
 		// 関数の引数の型リスト
 		std::vector<DataType> parameterTypes;
 
-		IdentifierInfo(IdentifierType t,int iv): type(t),iValue(iv),sValue("") {}
+		IdentifierInfo(IdentifierType t,int iv): idType(t),intValue(iv),strValue("") {}
 		IdentifierInfo(IdentifierType t,const std::string& sv):
-			type(t),iValue(0),sValue(sv) {}
+			idType(t),intValue(0),strValue(sv) {}
 	public:
-		IdentifierInfo(): type(IDENTIFIER_LOCAL_VARIABLE),iValue(0),sValue("") {}
+		IdentifierInfo(): idType(IDENTIFIER_LOCAL_VARIABLE),intValue(0),strValue("") {}
 
 		static IdentifierInfo makeLocalVariable(int offset,const DataType& type);
 		static IdentifierInfo makeGlobalVariable(const std::string& name,const DataType& type);
@@ -70,11 +70,11 @@ class IdentifierInfo {
 		static IdentifierInfo makeIntegerLiteral(int value,const DataType& type);
 		static IdentifierInfo makeStringLiteral(const std::string& str,const DataType& type);
 
-		IdentifierType getType() const {return type;}
-		int getOffset() const {return iValue;}
-		int getValue() const {return iValue;}
-		const std::string& getName() const {return sValue;}
-		const std::string& getString() const {return sValue;}
+		IdentifierType getIdentifierType() const {return idType;}
+		int getOffset() const {return intValue;}
+		int getValue() const {return intValue;}
+		const std::string& getName() const {return strValue;}
+		const std::string& getString() const {return strValue;}
 		const DataType& getDataType() const {return valueType;}
 		const std::vector<DataType>& getParameterTypeList() const {return parameterTypes;}
 };
