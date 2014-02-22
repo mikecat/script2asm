@@ -60,6 +60,8 @@ class DataType {
 
 		// 整数型を作成
 		static DataType createInteger(unsigned int size,bool isSigned);
+		// 整数のポインタを作成
+		static DataType createPointer(unsigned int size,bool isSigned);
 		// dtのポインタを作成
 		static DataType createPointer(const DataType& dt);
 		// dtの配列を作成

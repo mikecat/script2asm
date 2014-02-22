@@ -50,6 +50,13 @@ DataType DataType::createInteger(unsigned int size,bool isSigned) {
 	return DataType(size,isSigned);
 }
 
+DataType DataType::createPointer(unsigned int size,bool isSigned) {
+	DataType ret(size,isSigned);
+	ret.accessInfo.push_back(0);
+	ret.typeSize=ptrSize;
+	return ret;
+}
+
 DataType DataType::createPointer(const DataType& dt) {
 	return DataType(dt,0);
 }
