@@ -93,7 +93,8 @@ enum ErrorType {
 	ERROR_BRACKET_MISMATCH,
 	ERROR_NO_FUNCTION_PARAMATER,
 	ERROR_UNKNOWN_IDENTIFIER,
-	ERROR_INVALID_OPERATOR
+	ERROR_INVALID_OPERATOR,
+	ERROR_UNTERMINATED_STRING
 };
 
 struct ExprNode;
@@ -101,13 +102,11 @@ typedef std::vector<ExprNode*> ExprList;
 
 struct ExprNode {
 	OperatorType opType;
-	int intValue;
 	IdentifierInfo idInfo;
 	ExprList childNodes;
-	ExprNode(): opType(OP_INVALID),intValue(0) {}
-	ExprNode(OperatorType t): opType(t),intValue(0) {}
-	ExprNode(OperatorType t,int iv): opType(t),intValue(iv) {}
-	ExprNode(OperatorType t,const IdentifierInfo& it): opType(t),intValue(0),idInfo(it) {}
+	ExprNode(): opType(OP_INVALID) {}
+	ExprNode(OperatorType t): opType(t) {}
+	ExprNode(OperatorType t,const IdentifierInfo& it): opType(t),idInfo(it) {}
 	~ExprNode();
 };
 

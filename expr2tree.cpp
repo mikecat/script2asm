@@ -209,6 +209,52 @@ static bool isValidCharForBase(int base,int c) {
 	}
 }
 
+static int hex2int(int onechar) {
+	if(isdigit(onechar))return onechar-'0';
+	else if(isxdigit(onechar)) {
+		if(islower(onechar))return onechar-'a'+10;
+		else if(isupper(onechar))return onechar-'A'+10;
+	}
+	return 0;
+}
+
+static std::string unescapeString(const std::string& str) {
+	std::string ret("");
+	std::string::size_type len=str.length();
+	for(std::string::size_type i=0;i<len;i++) {
+		if(str.at(i)=='\\') {
+			i++;
+			if(i<len) {
+				switch(str.at(i)) {
+					case 'a': ret+='\x07';break;
+					case 'b': ret+='\x08';break;
+					case 't': ret+='\x09';break;
+					case 'n': ret+='\x0A';break;
+					case 'f': ret+='\x0C';break;
+					case 'r': ret+='\x0D';break;
+					case '\\': ret+='\x5C';break;
+					case '\'': ret+='\x2C';break;
+					case '\"': ret+='\x22';break;
+					case '\?': ret+='\x3F';break;
+					case 'x':
+						if(i+2<len && isxdigit(str.at(i+1)) && isxdigit(str.at(i+2))) {
+							ret+=(std::string::value_type)
+								(hex2int(str.at(i+1))*16+hex2int(str.at(i+2)));
+							i+=2;
+						} else {
+							ret+='x';
+						}
+						break;
+					default: ret+=str.at(i);break;
+				}
+			}
+		} else {
+			ret+=str.at(i);
+		}
+	}
+	return ret;
+}
+
 ExprList expr2tree(
 ErrorType& error,const std::string& expr,const IdentifierMap& identifiers,
 bool doConnect) {
@@ -246,7 +292,11 @@ bool doConnect) {
 						break;
 					}
 				}
-				exprStack.push_back(new ExprNode(OP_NUMBER,now));
+				exprStack.push_back(new ExprNode(OP_NUMBER,
+					IdentifierInfo::makeIntegerLiteral(
+						now,DataType::createInteger(2,true)
+					)
+				));
 				prevIsNumber=true;
 			} else if(isalpha(nowExpr) || nowExpr=='_') {
 				// Ž¯•ÊŽq(•Ï”‚Ü‚½‚ÍŠÖ”)
@@ -263,6 +313,32 @@ bool doConnect) {
 				} else {
 					throw ERROR_UNKNOWN_IDENTIFIER;
 				}
+			} else if(nowExpr=='\'') {
+				// •¶Žš
+				int ii=i;
+				for(i++;i<length && expr[i]!='\'';i++) {
+					if(expr[i]=='\\')i++;
+				}
+				if(i>=length)throw ERROR_UNTERMINATED_STRING;
+				exprStack.push_back(new ExprNode(OP_NUMBER,
+					IdentifierInfo::makeIntegerLiteral(
+						unescapeString(expr.substr(ii+1,i-ii-2)).at(0),
+						DataType::createInteger(2,true)
+					)
+				));
+			} else if(nowExpr=='\"') {
+				// •¶Žš—ñ
+				int ii=i;
+				for(i++;i<length && expr[i]!='\"';i++) {
+					if(expr[i]=='\\')i++;
+				}
+				if(i>=length)throw ERROR_UNTERMINATED_STRING;
+				exprStack.push_back(new ExprNode(OP_NUMBER,
+					IdentifierInfo::makeStringLiteral(
+						unescapeString(expr.substr(ii+1,i-ii-2)),
+						DataType::createPointer(1,false)
+					)
+				));
 			} else if(!isspace(nowExpr)) {
 				// ‰‰ŽZŽq
 				if(nowExpr=='(' || nowExpr=='[') {
