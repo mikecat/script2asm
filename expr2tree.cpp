@@ -332,6 +332,7 @@ bool doConnect) {
 						DataType::createInteger(2,true)
 					)
 				));
+				prevIsNumber=true;
 			} else if(nowExpr=='\"') {
 				// •¶Žš—ñ
 				int ii=i;
@@ -346,6 +347,7 @@ bool doConnect) {
 						DataType::createPointer(1,false)
 					)
 				));
+				prevIsNumber=true;
 			} else if(!isspace(nowExpr)) {
 				// ‰‰ŽZŽq
 				if(nowExpr=='(' || nowExpr=='[') {
