@@ -324,7 +324,8 @@ bool doConnect) {
 				for(i++;i<length && expr[i]!='\'';i++) {
 					if(expr[i]=='\\')i++;
 				}
-				if(i>=length)throw ERROR_UNTERMINATED_STRING;
+				i++;
+				if(i>length)throw ERROR_UNTERMINATED_STRING;
 				exprStack.push_back(new ExprNode(OP_NUMBER,
 					IdentifierInfo::makeIntegerLiteral(
 						unescapeString(expr.substr(ii+1,i-ii-2)).at(0),
@@ -337,7 +338,8 @@ bool doConnect) {
 				for(i++;i<length && expr[i]!='\"';i++) {
 					if(expr[i]=='\\')i++;
 				}
-				if(i>=length)throw ERROR_UNTERMINATED_STRING;
+				i++;
+				if(i>length)throw ERROR_UNTERMINATED_STRING;
 				exprStack.push_back(new ExprNode(OP_NUMBER,
 					IdentifierInfo::makeStringLiteral(
 						unescapeString(expr.substr(ii+1,i-ii-2)),
