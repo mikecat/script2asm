@@ -27,7 +27,8 @@ provided that the following conditions are met:
 3. This notice must be included, unaltered, with any source distribution.
 */
 
-#ifndef IDENTIFIER_INFO_H_GUARD_
+#ifndef IDENTIFIER_INFO_H_GUARD_171D8ADC_0319_40E2_A464_E7661BBF3664
+#define IDENTIFIER_INFO_H_GUARD_171D8ADC_0319_40E2_A464_E7661BBF3664
 
 #include <string>
 #include <vector>
@@ -73,6 +74,5 @@ class IdentifierInfo {
 		const DataType& getDataType() const {return valueType.at(0);}
 		const std::vector<DataType>& getDataTypeList() const {return valueType;}
 };
-
 
 #endif
