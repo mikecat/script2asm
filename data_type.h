@@ -42,20 +42,24 @@ class DataType {
 		unsigned int typeSize;
 		// 符号付きかどうか
 		bool isSignedFlag;
-	public:
+
 		static const int ptrSize=2; // ポインタのサイズ
-		// とりあえず作成
-		DataType():dataSize(0),typeSize(0),isSignedFlag(true){}
 		// 元となる型のサイズと符号つきかどうかを指定して作成
 		DataType(int size,bool signedFlag):
 			dataSize(size),typeSize(size),isSignedFlag(signedFlag){}
+		// 既存の型クラスの配列またはポインタを作成
+		DataType(const DataType& dt,unsigned int acInfo);
+
+	public:
+		// とりあえず作成
+		DataType():dataSize(0),typeSize(0),isSignedFlag(true){}
 		// コピーコンストラクタ
 		DataType(const DataType& dt):
 			accessInfo(dt.accessInfo),dataSize(dt.dataSize),
 			typeSize(dt.typeSize),isSignedFlag(dt.isSignedFlag){}
-		// 既存の型クラスの配列またはポインタを作成
-		DataType(const DataType& dt,unsigned int acInfo);
 
+		// 整数型を作成
+		static DataType createInteger(unsigned int size,bool isSigned);
 		// dtのポインタを作成
 		static DataType createPointer(const DataType& dt);
 		// dtの配列を作成

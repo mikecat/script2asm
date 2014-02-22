@@ -46,6 +46,10 @@ accessInfo(dt.accessInfo),dataSize(dt.dataSize),isSignedFlag(dt.isSignedFlag) {
 	}
 }
 
+DataType DataType::createInteger(unsigned int size,bool isSigned) {
+	return DataType(size,isSigned);
+}
+
 DataType DataType::createPointer(const DataType& dt) {
 	return DataType(dt,0);
 }
