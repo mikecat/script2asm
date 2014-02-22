@@ -24,12 +24,12 @@ HostApplication=
 UseCustomMakefile=1
 CustomMakefile=Makefile
 CommandLine=
-Folders=
+Folders=standalone
 IncludeVersionInfo=0
 SupportXPThemes=0
 CompilerSet=0
 CompilerSettings=000000a0b0110000000001000
-UnitCount=10
+UnitCount=11
 
 [VersionInfo]
 Major=1
@@ -145,6 +145,16 @@ FileName=Makefile
 Folder=script2asm
 Compile=0
 Link=0
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit11]
+FileName=expr2tree_sa.cpp
+CompileCpp=1
+Folder=standalone
+Compile=1
+Link=1
 Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
