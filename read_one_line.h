@@ -37,6 +37,7 @@ provided that the following conditions are met:
 typedef std::pair<std::string,std::string> stringPair;
 
 std::string readOneLine(FILE* fp);
+std::string stripComment(const std::string& str);
 std::string stripSpace(const std::string& str);
 stringPair divideKeywordAndValue(const std::string& str);
 

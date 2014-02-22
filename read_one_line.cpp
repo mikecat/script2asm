@@ -41,6 +41,20 @@ std::string readOneLine(FILE* fp) {
 	return line;
 }
 
+std::string stripComment(const std::string& str) {
+	static const char* commentStrings[]={"//",";","#",NULL};
+	std::string::size_type commentStartPos=str.size();
+	// 一番前にあるコメント開始を表す文字列を探す
+	for(const char** now=commentStrings;*now!=NULL;now++) {
+		std::string::size_type nowPos;
+		nowPos=str.find(*now);
+		if(nowPos!=std::string::npos && nowPos<commentStartPos) {
+			commentStartPos=nowPos;
+		}
+	}
+	return std::string(str.c_str(),commentStartPos);
+}
+
 std::string stripSpace(const std::string& str) {
 	std::string::const_iterator start,end,now;
 	bool startedFlag=false;

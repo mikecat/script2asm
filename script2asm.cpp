@@ -54,7 +54,7 @@ int main(void) {
 	std::map<std::string,int> globalVariableList;
 	std::map<std::string,int> localVariableList;
 	while(!feof(stdin)) {
-		std::string now=stripSpace(readOneLine(stdin));
+		std::string now=stripSpace(stripComment(readOneLine(stdin)));
 		if(now=="")continue;
 		stringPair keywordAndValue=divideKeywordAndValue(now);
 		std::string& keyword=keywordAndValue.first;
