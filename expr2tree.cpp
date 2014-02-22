@@ -297,7 +297,7 @@ bool doConnect) {
 					signedFlag=false;
 					i++;
 				}
-				exprStack.push_back(new ExprNode(OP_NUMBER,
+				exprStack.push_back(new ExprNode(OP_IDENTIFIER,
 					IdentifierInfo::makeIntegerLiteral(
 						now,DataType::createInteger(2,signedFlag)
 					)
@@ -312,7 +312,7 @@ bool doConnect) {
 				nowIdentifier=expr.substr(ii,i-ii);
 				if(identifiers.find(nowIdentifier)!=identifiers.end()) {
 					exprStack.push_back(
-						new ExprNode(OP_VALUABLE,identifiers.at(nowIdentifier))
+						new ExprNode(OP_IDENTIFIER,identifiers.at(nowIdentifier))
 					);
 					prevIsNumber=true;
 				} else {
@@ -326,7 +326,7 @@ bool doConnect) {
 				}
 				i++;
 				if(i>length)throw ERROR_UNTERMINATED_STRING;
-				exprStack.push_back(new ExprNode(OP_NUMBER,
+				exprStack.push_back(new ExprNode(OP_IDENTIFIER,
 					IdentifierInfo::makeIntegerLiteral(
 						unescapeString(expr.substr(ii+1,i-ii-2)).at(0),
 						DataType::createInteger(2,true)
@@ -340,7 +340,7 @@ bool doConnect) {
 				}
 				i++;
 				if(i>length)throw ERROR_UNTERMINATED_STRING;
-				exprStack.push_back(new ExprNode(OP_NUMBER,
+				exprStack.push_back(new ExprNode(OP_IDENTIFIER,
 					IdentifierInfo::makeStringLiteral(
 						unescapeString(expr.substr(ii+1,i-ii-2)),
 						DataType::createPointer(1,false)

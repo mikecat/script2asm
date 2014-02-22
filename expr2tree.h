@@ -39,8 +39,7 @@ namespace Expr2tree {
 
 enum OperatorType {
 	OP_INVALID,
-	OP_NUMBER,
-	OP_VALUABLE,
+	OP_IDENTIFIER,
 	OP_CALL_FUNCTION,
 	OP_ARRAY,
 	OP_INC_AFTER,
