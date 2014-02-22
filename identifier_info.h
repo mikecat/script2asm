@@ -36,24 +36,42 @@ provided that the following conditions are met:
 enum IdentifierType {
 	IDENTIFIER_FUNCTION, // 関数
 	IDENTIFIER_GLOBAL_VALUE, // グローバル変数
-	IDENTIFIER_LOCAL_VALUE // ローカル変数・引数
+	IDENTIFIER_LOCAL_VALUE, // ローカル変数・引数
+	IDENTIFIER_INTEGER_LITERAL, // 整数リテラル
+	IDENTIFIER_STRING_LITERAL // 文字列リテラル
 };
 
-struct IdentifierInfo {
-	IdentifierType type;
-	int memOffset; // ローカル変数・引数用
-	std::string name; // グローバル変数・関数用
-	std::vector<DataType> valueType;
+class IdentifierInfo {
+	private:
+		IdentifierType type;
+		// ローカル変数・引数では%bpからのオフセット
+		// 整数リテラルではその値
+		int iValue; 
+		// グローバル変数・関数では名前
+		// 文字列リテラルではその文字列
+		std::string sValue;
+		std::vector<DataType> valueType;
 
-	IdentifierInfo(): type(IDENTIFIER_LOCAL_VALUE),memOffset(0),name("") {}
-	IdentifierInfo(IdentifierType t,int offset): type(t),memOffset(offset),name("") {}
-	IdentifierInfo(IdentifierType t,const std::string& iname):
-		type(t),memOffset(0),name(iname) {}
+		IdentifierInfo(IdentifierType t,int iv): type(t),iValue(iv),sValue("") {}
+		IdentifierInfo(IdentifierType t,const std::string& sv):
+			type(t),iValue(0),sValue(sv) {}
+	public:
+		IdentifierInfo(): type(IDENTIFIER_LOCAL_VALUE),iValue(0),sValue("") {}
 
-	static IdentifierInfo MakeLocalValue(int offset,const DataType& type);
-	static IdentifierInfo MakeGlobalValue(const std::string& name,const DataType& type);
-	static IdentifierInfo MakeFunction(
-		const std::string& name,const std::vector<DataType>& typeList);
+		static IdentifierInfo makeLocalValue(int offset,const DataType& type);
+		static IdentifierInfo makeGlobalValue(const std::string& name,const DataType& type);
+		static IdentifierInfo makeFunction(
+			const std::string& name,const std::vector<DataType>& typeList);
+		static IdentifierInfo makeIntegerLiteral(int value,const DataType& type);
+		static IdentifierInfo makeStringLiteral(const std::string& str,const DataType& type);
+
+		IdentifierType getType() const {return type;}
+		int getOffset() const {return iValue;}
+		int getValue() const {return iValue;}
+		const std::string& getName() const {return sValue;}
+		const std::string& getString() const {return sValue;}
+		const DataType& getDataType() const {return valueType.at(0);}
+		const std::vector<DataType>& getDataTypeList() const {return valueType;}
 };
 
 

@@ -29,22 +29,35 @@ provided that the following conditions are met:
 
 #include "identifier_info.h"
 
-IdentifierInfo IdentifierInfo::MakeLocalValue(int offset,const DataType& type) {
+IdentifierInfo IdentifierInfo::makeLocalValue(int offset,const DataType& type) {
 	IdentifierInfo ret(IDENTIFIER_LOCAL_VALUE,offset);
 	ret.valueType.push_back(type);
 	return ret;
 }
 
-IdentifierInfo IdentifierInfo::MakeGlobalValue(
+IdentifierInfo IdentifierInfo::makeGlobalValue(
 const std::string& name,const DataType& type) {
 	IdentifierInfo ret(IDENTIFIER_GLOBAL_VALUE,name);
 	ret.valueType.push_back(type);
 	return ret;
 }
 
-IdentifierInfo IdentifierInfo::MakeFunction(
+IdentifierInfo IdentifierInfo::makeFunction(
 const std::string& name,const std::vector<DataType>& typeList) {
 	IdentifierInfo ret(IDENTIFIER_FUNCTION,name);
 	ret.valueType=typeList;
+	return ret;
+}
+
+IdentifierInfo IdentifierInfo::makeIntegerLiteral(int value,const DataType& type) {
+	IdentifierInfo ret(IDENTIFIER_INTEGER_LITERAL,value);
+	ret.valueType.push_back(type);
+	return ret;
+}
+
+IdentifierInfo IdentifierInfo::makeStringLiteral
+(const std::string& str,const DataType& type) {
+	IdentifierInfo ret(IDENTIFIER_STRING_LITERAL,str);
+	ret.valueType.push_back(type);
 	return ret;
 }
