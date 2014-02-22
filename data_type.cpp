@@ -99,6 +99,10 @@ bool DataType::isPointer() const {
 	return !accessInfo.empty() && accessInfo.at(accessInfo.size()-1)==0;
 }
 
+bool DataType::canConsiderAsPointer() const {
+	return !accessInfo.empty();
+}
+
 bool DataType::isSigned() const {
 	return isSignedFlag;
 }

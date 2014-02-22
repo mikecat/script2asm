@@ -73,6 +73,7 @@ class DataType {
 		unsigned int getTypeSize() const; // 型自体のサイズ
 		unsigned int getDataSize() const; // 元となる型のサイズ
 		bool isPointer() const; // ポインタかどうか
+		bool canConsiderAsPointer() const; // ポインタと見なせるかどうか(ポインタor配列かどうか)
 		bool isSigned() const; // 符号付きかどうか
 		DataType getParentType() const; // 1段階前の型
 		unsigned int getParentSize() const; // 1段階前の型のサイズ
