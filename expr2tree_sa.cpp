@@ -113,6 +113,28 @@ int main(void) {
 	char buffer[10000];
 	IdentifierMap imap;
 	initPrint();
+	DataType intType=DataType::createInteger(2,true);
+	// グローバル変数
+	imap["hoge"]=IdentifierInfo::makeGlobalVariable("hoge",intType);
+	imap["fuga"]=IdentifierInfo::makeGlobalVariable("fuga",intType);
+	// ローカル変数
+	imap["x"]=IdentifierInfo::makeLocalVariable(-2,intType);
+	imap["y"]=IdentifierInfo::makeLocalVariable(-4,intType);
+	imap["z"]=IdentifierInfo::makeLocalVariable(-6,intType);
+	imap["i"]=IdentifierInfo::makeLocalVariable(-8,intType);
+	imap["ii"]=IdentifierInfo::makeLocalVariable(-10,intType);
+	// 引数
+	imap["foo"]=IdentifierInfo::makeLocalVariable(4,intType);
+	imap["bar"]=IdentifierInfo::makeLocalVariable(6,intType);
+	// 関数
+	std::vector<DataType> dataTypeList;
+	imap["rand"]=IdentifierInfo::makeFunction("rand",dataTypeList);
+	dataTypeList.push_back(intType);
+	imap["abs"]=IdentifierInfo::makeFunction("abs",dataTypeList);
+	dataTypeList.push_back(intType);
+	imap["max"]=IdentifierInfo::makeFunction("max",dataTypeList);
+	imap["min"]=IdentifierInfo::makeFunction("min",dataTypeList);
+
 	while(fgets(buffer,sizeof(buffer),stdin)) {
 		ExprList exl;
 		ErrorType err;
