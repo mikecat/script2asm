@@ -31,33 +31,34 @@ provided that the following conditions are met:
 
 IdentifierInfo IdentifierInfo::makeLocalVariable(int offset,const DataType& type) {
 	IdentifierInfo ret(IDENTIFIER_LOCAL_VARIABLE,offset);
-	ret.valueType.push_back(type);
+	ret.valueType=type;
 	return ret;
 }
 
 IdentifierInfo IdentifierInfo::makeGlobalVariable(
 const std::string& name,const DataType& type) {
 	IdentifierInfo ret(IDENTIFIER_GLOBAL_VARIABLE,name);
-	ret.valueType.push_back(type);
+	ret.valueType=type;
 	return ret;
 }
 
-IdentifierInfo IdentifierInfo::makeFunction(
-const std::string& name,const std::vector<DataType>& typeList) {
+IdentifierInfo IdentifierInfo::makeFunction(const std::string& name,
+const DataType& returnType,const std::vector<DataType>& parameterTypeList) {
 	IdentifierInfo ret(IDENTIFIER_FUNCTION,name);
-	ret.valueType=typeList;
+	ret.valueType=returnType;
+	ret.parameterTypes=parameterTypeList;
 	return ret;
 }
 
 IdentifierInfo IdentifierInfo::makeIntegerLiteral(int value,const DataType& type) {
 	IdentifierInfo ret(IDENTIFIER_INTEGER_LITERAL,value);
-	ret.valueType.push_back(type);
+	ret.valueType=type;
 	return ret;
 }
 
 IdentifierInfo IdentifierInfo::makeStringLiteral
 (const std::string& str,const DataType& type) {
 	IdentifierInfo ret(IDENTIFIER_STRING_LITERAL,str);
-	ret.valueType.push_back(type);
+	ret.valueType=type;
 	return ret;
 }

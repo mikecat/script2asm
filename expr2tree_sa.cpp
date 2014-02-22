@@ -128,12 +128,12 @@ int main(void) {
 	imap["bar"]=IdentifierInfo::makeLocalVariable(6,intType);
 	// ä÷êî
 	std::vector<DataType> dataTypeList;
-	imap["rand"]=IdentifierInfo::makeFunction("rand",dataTypeList);
+	imap["rand"]=IdentifierInfo::makeFunction("rand",intType,dataTypeList);
 	dataTypeList.push_back(intType);
-	imap["abs"]=IdentifierInfo::makeFunction("abs",dataTypeList);
+	imap["abs"]=IdentifierInfo::makeFunction("abs",intType,dataTypeList);
 	dataTypeList.push_back(intType);
-	imap["max"]=IdentifierInfo::makeFunction("max",dataTypeList);
-	imap["min"]=IdentifierInfo::makeFunction("min",dataTypeList);
+	imap["max"]=IdentifierInfo::makeFunction("max",intType,dataTypeList);
+	imap["min"]=IdentifierInfo::makeFunction("min",intType,dataTypeList);
 
 	while(fgets(buffer,sizeof(buffer),stdin)) {
 		ExprList exl;

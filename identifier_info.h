@@ -51,7 +51,10 @@ class IdentifierInfo {
 		// グローバル変数・関数では名前
 		// 文字列リテラルではその文字列
 		std::string sValue;
-		std::vector<DataType> valueType;
+		// 型
+		DataType valueType;
+		// 関数の引数の型リスト
+		std::vector<DataType> parameterTypes;
 
 		IdentifierInfo(IdentifierType t,int iv): type(t),iValue(iv),sValue("") {}
 		IdentifierInfo(IdentifierType t,const std::string& sv):
@@ -62,7 +65,8 @@ class IdentifierInfo {
 		static IdentifierInfo makeLocalVariable(int offset,const DataType& type);
 		static IdentifierInfo makeGlobalVariable(const std::string& name,const DataType& type);
 		static IdentifierInfo makeFunction(
-			const std::string& name,const std::vector<DataType>& typeList);
+			const std::string& name,const DataType& returnType,
+			const std::vector<DataType>& parameterTypeList);
 		static IdentifierInfo makeIntegerLiteral(int value,const DataType& type);
 		static IdentifierInfo makeStringLiteral(const std::string& str,const DataType& type);
 
@@ -71,8 +75,8 @@ class IdentifierInfo {
 		int getValue() const {return iValue;}
 		const std::string& getName() const {return sValue;}
 		const std::string& getString() const {return sValue;}
-		const DataType& getDataType() const {return valueType.at(0);}
-		const std::vector<DataType>& getDataTypeList() const {return valueType;}
+		const DataType& getDataType() const {return valueType;}
+		const std::vector<DataType>& getParameterTypeList() const {return parameterTypes;}
 };
 
 #endif
