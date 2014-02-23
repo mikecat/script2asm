@@ -42,6 +42,8 @@ int main(void) {
 	FILE* outputFile=stdout;
 	// 今、何行目か
 	int lineCounter=0;
+	// 複数行コメントのネストレベル 
+	int commentCounter=0;
 	// 次に使用するラベルの番号
 	int labelCounter=0;
 	// スクリプトのどこにいるか(トップ、グローバル変数の宣言、関数など)
@@ -64,93 +66,105 @@ int main(void) {
 			stringPair keywordAndValue=divideKeywordAndValue(now);
 			const std::string& keyword=keywordAndValue.first;
 			const std::string& value=keywordAndValue.second;
-			if(keyword=="global") {
-				if(status!=STATUS_TOP) {
-					throw std::string("stray \"global\"");
+			if(keyword=="comment") {
+				commentCounter++;
+			} else if(keyword=="endcomment") {
+				if(commentCounter==0) {
+					throw std::string("stray \"endcomment\"");
 				}
-				status=STATUS_GLOBAL_VARIABLE;
-			} else if(keyword=="endglobal") {
-				if(status!=STATUS_GLOBAL_VARIABLE) {
-					throw std::string("stray \"endglobal\"");
-				}
-				status=STATUS_TOP;
-			} else if(keyword=="function") {
-				// ステータスを確認
-				if(status!=STATUS_TOP) {
-					throw std::string("stray \"function\"");
-				}
-				// 関数名と戻り値の型に分ける
-				stringPair functionNameAndType=divideKeywordAndValue(value);
-				const std::string& functionName=functionNameAndType.first;
-				const std::string& functionType=functionNameAndType.second;
-				if(globalFunctionAndVariableList.count(functionName)!=0) {
-					// 既にその関数が存在する: 分割宣言の実装とみなす
-					if(globalFunctionAndVariableList.at(functionName).
-					getIdentifierType()!=IDENTIFIER_FUNCTION) {
-						throw functionName+std::string(" is already defined and not a function");
-					} else if(functionType!="") {
-						fprintf(stderr,
-							"Warning at line %d : return type written here is ignored\n",lineCounter);
+				commentCounter--;
+			} else if(commentCounter<=0) {
+				if(keyword=="global") {
+					if(status!=STATUS_TOP) {
+						throw std::string("stray \"global\"");
 					}
-				} else {
-					// 新規関数
-					if(functionType=="") {
-						throw std::string("return type is required");
+					status=STATUS_GLOBAL_VARIABLE;
+				} else if(keyword=="endglobal") {
+					if(status!=STATUS_GLOBAL_VARIABLE) {
+						throw std::string("stray \"endglobal\"");
 					}
-				}
-				// 関数のパラメータの初期化
-				nowFunctionName=functionName;
-				nowFunctionReturnType=parseType(functionType);
-				nowFunctionParameterTypes.clear();
-				nowFunctionLocalVariableList.clear();
-				status=STATUS_FUNCTION_TOP;
-			} else if(keyword=="parameters") {
-			} else if(keyword=="variables") {
-			} else if(keyword=="procedure") {
-			} else if(keyword=="assembly") {
-			} else if(keyword=="endfunction") {
-			} else if(keyword=="if") {
-			} else if(keyword=="elseif") {
-			} else if(keyword=="else") {
-			} else if(keyword=="endif") {
-			} else if(keyword=="while") {
-			} else if(keyword=="wend") {
-			} else if(keyword=="do") {
-			} else if(keyword=="dowhile") {
-			} else if(keyword=="repeat") {
-			} else if(keyword=="loop") {
-			} else if(keyword=="continue") {
-			} else if(keyword=="break") {
-			} else if(keyword=="return") {
-			} else {
-				switch(status) {
-					case STATUS_TOP:
-					case STATUS_FUNCTION_TOP:
-						throw std::string("Invalid expression");
-						break;
-					case STATUS_GLOBAL_VARIABLE:
-						if(globalFunctionAndVariableList.count(keyword)!=0) {
-							throw keyword+std::string(" is already defined");
+					status=STATUS_TOP;
+				} else if(keyword=="function") {
+					// ステータスを確認
+					if(status!=STATUS_TOP) {
+						throw std::string("stray \"function\"");
+					}
+					// 関数名と戻り値の型に分ける
+					stringPair functionNameAndType=divideKeywordAndValue(value);
+					const std::string& functionName=functionNameAndType.first;
+					const std::string& functionType=functionNameAndType.second;
+					if(globalFunctionAndVariableList.count(functionName)!=0) {
+						// 既にその関数が存在する: 分割宣言の実装とみなす
+						if(globalFunctionAndVariableList.at(functionName).
+						getIdentifierType()!=IDENTIFIER_FUNCTION) {
+							throw functionName+std::string(" is already defined and not a function");
+						} else if(functionType!="") {
+							fprintf(stderr,
+								"Warning at line %d : return type written here is ignored\n",lineCounter);
 						}
-						globalFunctionAndVariableList[keyword]=
-							IdentifierInfo::makeGlobalVariable(
-								keyword,parseType(value)
-							);
-						break;
-					case STATUS_FUNCTION_PARAMETERS:
-						// not impremented yet
-						break;
-					case STATUS_FUNCTION_VARIABLES:
-						// not impremented yet
-						break;
-					case STATUS_FUNCTION_PROCEDURE:
-						// not impremented yet
-						break;
-					case STATUS_FUNCTION_ASSEMBLY:
-						fputs((rawLine+"\n").c_str(),outputFile);
-						break;
+					} else {
+						// 新規関数
+						if(functionType=="") {
+							throw std::string("return type is required");
+						}
+					}
+					// 関数のパラメータの初期化
+					nowFunctionName=functionName;
+					nowFunctionReturnType=parseType(functionType);
+					nowFunctionParameterTypes.clear();
+					nowFunctionLocalVariableList.clear();
+					status=STATUS_FUNCTION_TOP;
+				} else if(keyword=="parameters") {
+				} else if(keyword=="variables") {
+				} else if(keyword=="procedure") {
+				} else if(keyword=="assembly") {
+				} else if(keyword=="endfunction") {
+				} else if(keyword=="if") {
+				} else if(keyword=="elseif") {
+				} else if(keyword=="else") {
+				} else if(keyword=="endif") {
+				} else if(keyword=="while") {
+				} else if(keyword=="wend") {
+				} else if(keyword=="do") {
+				} else if(keyword=="dowhile") {
+				} else if(keyword=="repeat") {
+				} else if(keyword=="loop") {
+				} else if(keyword=="continue") {
+				} else if(keyword=="break") {
+				} else if(keyword=="return") {
+				} else {
+					switch(status) {
+						case STATUS_TOP:
+						case STATUS_FUNCTION_TOP:
+							throw std::string("Invalid expression");
+							break;
+						case STATUS_GLOBAL_VARIABLE:
+							if(globalFunctionAndVariableList.count(keyword)!=0) {
+								throw keyword+std::string(" is already defined");
+							}
+							globalFunctionAndVariableList[keyword]=
+								IdentifierInfo::makeGlobalVariable(
+									keyword,parseType(value)
+								);
+							break;
+						case STATUS_FUNCTION_PARAMETERS:
+							// not impremented yet
+							break;
+						case STATUS_FUNCTION_VARIABLES:
+							// not impremented yet
+							break;
+						case STATUS_FUNCTION_PROCEDURE:
+							// not impremented yet
+							break;
+						case STATUS_FUNCTION_ASSEMBLY:
+							fputs((rawLine+"\n").c_str(),outputFile);
+							break;
+					}
 				}
 			}
+		}
+		if(commentCounter>0) {
+			throw std::string("comment is unterminated at end of file");
 		}
 	} catch(std::string err) {
 		fprintf(stderr,"Error at line %d : %s\n",lineCounter,err.c_str());
