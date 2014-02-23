@@ -35,6 +35,7 @@ provided that the following conditions are met:
 #include "script2asm.h"
 
 int main(void) {
+	int lineCounter=0;
 	int ifCounter=0;
 	int whileCounter=0;
 	int doWhileCounter=0;
@@ -43,35 +44,41 @@ int main(void) {
 	std::stack<ControlInfo> controlStack;
 	std::map<std::string,int> globalFunctionAndVariableList;
 	std::map<std::string,int> localVariableList;
-	while(!feof(stdin)) {
-		std::string now=stripSpace(stripComment(readOneLine(stdin)));
-		if(now=="")continue;
-		stringPair keywordAndValue=divideKeywordAndValue(now);
-		const std::string& keyword=keywordAndValue.first;
-		const std::string& value=keywordAndValue.second;
-		if(keyword=="global") {
-		} else if(keyword=="function") {
-		} else if(keyword=="parameters") {
-		} else if(keyword=="variables") {
-		} else if(keyword=="procedure") {
-		} else if(keyword=="assembly") {
-		} else if(keyword=="endfunction") {
-		} else if(keyword=="if") {
-		} else if(keyword=="elseif") {
-		} else if(keyword=="else") {
-		} else if(keyword=="endif") {
-		} else if(keyword=="while") {
-		} else if(keyword=="wend") {
-		} else if(keyword=="do") {
-		} else if(keyword=="dowhile") {
-		} else if(keyword=="repeat") {
-		} else if(keyword=="loop") {
-		} else if(keyword=="continue") {
-		} else if(keyword=="break") {
-		} else if(keyword=="return") {
-		} else {
-			// ˆê”Ê‚ÌŽ®
+	try {
+		while(!feof(stdin)) {
+			lineCounter++;
+			std::string now=stripSpace(stripComment(readOneLine(stdin)));
+			if(now=="")continue;
+			stringPair keywordAndValue=divideKeywordAndValue(now);
+			const std::string& keyword=keywordAndValue.first;
+			const std::string& value=keywordAndValue.second;
+			if(keyword=="global") {
+			} else if(keyword=="function") {
+			} else if(keyword=="parameters") {
+			} else if(keyword=="variables") {
+			} else if(keyword=="procedure") {
+			} else if(keyword=="assembly") {
+			} else if(keyword=="endfunction") {
+			} else if(keyword=="if") {
+			} else if(keyword=="elseif") {
+			} else if(keyword=="else") {
+			} else if(keyword=="endif") {
+			} else if(keyword=="while") {
+			} else if(keyword=="wend") {
+			} else if(keyword=="do") {
+			} else if(keyword=="dowhile") {
+			} else if(keyword=="repeat") {
+			} else if(keyword=="loop") {
+			} else if(keyword=="continue") {
+			} else if(keyword=="break") {
+			} else if(keyword=="return") {
+			} else {
+				// ˆê”Ê‚ÌŽ®
+			}
 		}
+	} catch(std::string err) {
+		fprintf(stderr,"line %d : %s\n",lineCounter,err.c_str());
+		return 1;
 	}
 	return 0;
 }
