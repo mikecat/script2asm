@@ -27,34 +27,22 @@ provided that the following conditions are met:
 3. This notice must be included, unaltered, with any source distribution.
 */
 
-#include <cstdio>
-#include <string>
-#include <stack>
-#include <map>
-#include "read_one_line.h"
-#include "script2asm.h"
+#ifndef SCRIPT2ASM_H_GUARD_CE14B8E6_114B_4AE3_9636_1B35B0E190BE
+#define SCRIPT2ASM_H_GUARD_CE14B8E6_114B_4AE3_9636_1B35B0E190BE
 
-int main(void) {
-	int ifCounter=0;
-	int whileCounter=0;
-	int doWhileCounter=0;
-	int repeatCounter=0;
-	std::stack<ControlInfo> controlStack;
-	std::map<std::string,int> functionList;
-	std::map<std::string,int> globalVariableList;
-	std::map<std::string,int> localVariableList;
-	while(!feof(stdin)) {
-		std::string now=stripSpace(stripComment(readOneLine(stdin)));
-		if(now=="")continue;
-		stringPair keywordAndValue=divideKeywordAndValue(now);
-		std::string& keyword=keywordAndValue.first;
-		std::string& value=keywordAndValue.second;
-		if(keyword=="function") {
-		} else if(keyword=="parameters") {
-		} else if(keyword=="procedure") {
-		} else if(keyword=="endfunction") {
-		} else {
-		}
-	}
-	return 0;
-}
+enum ControlType {
+	TYPE_IF,
+	TYPE_WHILE,
+	TYPE_DOWHILE,
+	TYPE_REPEAT,
+	TYPE_FUNCTION_PARAMETERS,
+	TYPE_FUNCTION_VARIABLES,
+	TYPE_FUNCTION_PROCEDURE
+};
+
+struct ControlInfo {
+	ControlType type;
+	int count;
+};
+
+#endif
