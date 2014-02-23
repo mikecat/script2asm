@@ -43,13 +43,17 @@ enum ControlType {
 	TYPE_FUNCTION_PROCEDURE
 };
 
+struct ControlInfo {
+	ControlType type;
+	int count;
+};
+
 int main(void) {
 	int ifCounter=0;
-	int elseifCounter=0;
 	int whileCounter=0;
 	int doWhileCounter=0;
 	int repeatCounter=0;
-	std::stack<ControlType> controlStack;
+	std::stack<ControlInfo> controlStack;
 	std::map<std::string,int> functionList;
 	std::map<std::string,int> globalVariableList;
 	std::map<std::string,int> localVariableList;
