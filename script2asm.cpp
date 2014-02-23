@@ -32,9 +32,13 @@ provided that the following conditions are met:
 #include <stack>
 #include <map>
 #include "read_one_line.h"
+#include "identifier_info.h"
+#include "parse_type.h"
 #include "script2asm.h"
 
 int main(void) {
+	FILE* inputFile=stdin;
+	FILE* outputFile=stdout;
 	int lineCounter=0;
 	int ifCounter=0;
 	int whileCounter=0;
@@ -42,12 +46,12 @@ int main(void) {
 	int repeatCounter=0;
 	ScriptStatus status=STATUS_TOP;
 	std::stack<ControlInfo> controlStack;
-	std::map<std::string,int> globalFunctionAndVariableList;
-	std::map<std::string,int> localVariableList;
+	std::map<std::string,IdentifierInfo> globalFunctionAndVariableList;
+	std::map<std::string,IdentifierInfo> localVariableList;
 	try {
 		while(!feof(stdin)) {
 			lineCounter++;
-			std::string rawLine=readOneLine(stdin);
+			std::string rawLine=readOneLine(inputFile);
 			std::string now=stripSpace(stripComment(rawLine));
 			if(now=="")continue;
 			stringPair keywordAndValue=divideKeywordAndValue(now);
@@ -74,7 +78,33 @@ int main(void) {
 			} else if(keyword=="break") {
 			} else if(keyword=="return") {
 			} else {
-				// ˆê”Ê‚ÌŽ®
+				switch(status) {
+					case STATUS_TOP:
+					case STATUS_FUNCTION_TOP:
+						throw std::string("Invalid expression");
+						break;
+					case STATUS_GLOVAL_VARIABLE:
+						if(globalFunctionAndVariableList.count(keyword)!=0) {
+							throw keyword+std::string(" is already defined");
+						}
+						globalFunctionAndVariableList[keyword]=
+							IdentifierInfo::makeGlobalVariable(
+								keyword,parseType(value)
+							);
+						break;
+					case STATUS_FUNCTION_PARAMETERS:
+						// not impremented yet
+						break;
+					case STATUS_FUNCTION_VARIABLES:
+						// not impremented yet
+						break;
+					case STATUS_FUNCTION_PROCEDURE:
+						// not impremented yet
+						break;
+					case STATUS_FUNCTION_ASSEMBLY:
+						fputs((rawLine+"\n").c_str(),outputFile);
+						break;
+				}
 			}
 		}
 	} catch(std::string err) {
