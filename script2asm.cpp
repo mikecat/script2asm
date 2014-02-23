@@ -47,7 +47,8 @@ int main(void) {
 	try {
 		while(!feof(stdin)) {
 			lineCounter++;
-			std::string now=stripSpace(stripComment(readOneLine(stdin)));
+			std::string rawLine=readOneLine(stdin);
+			std::string now=stripSpace(stripComment(rawLine));
 			if(now=="")continue;
 			stringPair keywordAndValue=divideKeywordAndValue(now);
 			const std::string& keyword=keywordAndValue.first;
