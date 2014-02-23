@@ -39,6 +39,7 @@ int main(void) {
 	int whileCounter=0;
 	int doWhileCounter=0;
 	int repeatCounter=0;
+	ScriptStatus status=STATUS_TOP;
 	std::stack<ControlInfo> controlStack;
 	std::map<std::string,int> globalFunctionAndVariableList;
 	std::map<std::string,int> localVariableList;
