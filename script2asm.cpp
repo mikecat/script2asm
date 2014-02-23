@@ -45,9 +45,12 @@ int main(void) {
 	int doWhileCounter=0;
 	int repeatCounter=0;
 	ScriptStatus status=STATUS_TOP;
+	std::string nowFunctionName;
+	DataType nowFunctionReturnType;
+	std::vector<DataType> nowFunctionParameterTypes;
+	std::map<std::string,IdentifierInfo> nowFunctionLocalVariableList;
 	std::stack<ControlInfo> controlStack;
 	std::map<std::string,IdentifierInfo> globalFunctionAndVariableList;
-	std::map<std::string,IdentifierInfo> localVariableList;
 	try {
 		while(!feof(stdin)) {
 			lineCounter++;
@@ -59,6 +62,35 @@ int main(void) {
 			const std::string& value=keywordAndValue.second;
 			if(keyword=="global") {
 			} else if(keyword=="function") {
+				// ステータスを確認
+				if(status!=STATUS_TOP) {
+					throw std::string("stray \"function\"");
+				}
+				// 関数名と戻り値の型に分ける
+				stringPair functionNameAndType=divideKeywordAndValue(value);
+				const std::string& functionName=functionNameAndType.first;
+				const std::string& functionType=functionNameAndType.second;
+				if(globalFunctionAndVariableList.count(functionName)!=0) {
+					// 既にその関数が存在する: 分割宣言の実装とみなす
+					if(globalFunctionAndVariableList.at(functionName).
+					getIdentifierType()!=IDENTIFIER_FUNCTION) {
+						throw functionName+std::string(" is already defined and not a function");
+					} else if(functionType!="") {
+						fprintf(stderr,
+							"Warning at line %d : return type written here is ignored\n",lineCounter);
+					}
+				} else {
+					// 新規関数
+					if(functionType=="") {
+						throw std::string("return type is required");
+					}
+				}
+				// 関数のパラメータの初期化
+				nowFunctionName=functionName;
+				nowFunctionReturnType=parseType(functionType);
+				nowFunctionParameterTypes.clear();
+				nowFunctionLocalVariableList.clear();
+				status=STATUS_FUNCTION_TOP;
 			} else if(keyword=="parameters") {
 			} else if(keyword=="variables") {
 			} else if(keyword=="procedure") {
