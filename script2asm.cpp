@@ -108,7 +108,7 @@ int main(void) {
 			}
 		}
 	} catch(std::string err) {
-		fprintf(stderr,"line %d : %s\n",lineCounter,err.c_str());
+		fprintf(stderr,"Error at line %d : %s\n",lineCounter,err.c_str());
 		return 1;
 	}
 	return 0;
