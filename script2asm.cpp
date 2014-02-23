@@ -37,17 +37,24 @@ provided that the following conditions are met:
 #include "script2asm.h"
 
 int main(void) {
+	// 入出力のファイルポインタ
 	FILE* inputFile=stdin;
 	FILE* outputFile=stdout;
+	// 今、何行目か
 	int lineCounter=0;
+	// 次に使用するラベルの番号
 	int labelCounter=0;
+	// スクリプトのどこにいるか(トップ、グローバル変数の宣言、関数など)
 	ScriptStatus status=STATUS_TOP;
+	// グローバル変数と関数のリスト 
+	std::map<std::string,IdentifierInfo> globalFunctionAndVariableList;
+	// 今変換している関数の情報
 	std::string nowFunctionName;
 	DataType nowFunctionReturnType;
 	std::vector<DataType> nowFunctionParameterTypes;
 	std::map<std::string,IdentifierInfo> nowFunctionLocalVariableList;
+	// フロー制御の階層
 	std::stack<ControlInfo> controlStack;
-	std::map<std::string,IdentifierInfo> globalFunctionAndVariableList;
 	try {
 		while(!feof(stdin)) {
 			lineCounter++;
