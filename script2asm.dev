@@ -29,7 +29,7 @@ IncludeVersionInfo=0
 SupportXPThemes=0
 CompilerSet=0
 CompilerSettings=000000a0b0110000000001000
-UnitCount=11
+UnitCount=13
 
 [VersionInfo]
 Major=1
@@ -153,6 +153,26 @@ BuildCmd=
 FileName=expr2tree_sa.cpp
 CompileCpp=1
 Folder=standalone
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit12]
+FileName=parse_type.cpp
+CompileCpp=1
+Folder=
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit13]
+FileName=parse_type.h
+CompileCpp=1
+Folder=
 Compile=1
 Link=1
 Priority=1000

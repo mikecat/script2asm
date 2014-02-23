@@ -1,5 +1,5 @@
 CXX      = g++
-OBJS     = expr2tree.o read_one_line.o data_type.o identifier_info.o
+OBJS     = expr2tree.o read_one_line.o data_type.o identifier_info.o parse_type.o
 BINOBJS  = script2asm.o expr2tree_sa.o
 BIN      = script2asm.exe expr2tree_sa.exe
 CXXFLAGS = -O2 -std=c++98 -Wall -Wextra -Werror-implicit-function-declaration -finput-charset=cp932 -fexec-charset=cp932
@@ -31,6 +31,9 @@ data_type.o: data_type.cpp
 
 identifier_info.o: identifier_info.cpp
 	$(CXX) $(CXXFLAGS) -c -o identifier_info.o identifier_info.cpp
+
+parse_type.o: parse_type.cpp
+	$(CXX) $(CXXFLAGS) -c -o parse_type.o parse_type.cpp
 
 expr2tree_sa.o: expr2tree_sa.cpp
 	$(CXX) $(CXXFLAGS) -c -o expr2tree_sa.o expr2tree_sa.cpp
