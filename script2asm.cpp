@@ -83,7 +83,7 @@ int main(void) {
 					case STATUS_FUNCTION_TOP:
 						throw std::string("Invalid expression");
 						break;
-					case STATUS_GLOVAL_VARIABLE:
+					case STATUS_GLOBAL_VARIABLE:
 						if(globalFunctionAndVariableList.count(keyword)!=0) {
 							throw keyword+std::string(" is already defined");
 						}
