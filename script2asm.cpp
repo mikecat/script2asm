@@ -40,10 +40,7 @@ int main(void) {
 	FILE* inputFile=stdin;
 	FILE* outputFile=stdout;
 	int lineCounter=0;
-	int ifCounter=0;
-	int whileCounter=0;
-	int doWhileCounter=0;
-	int repeatCounter=0;
+	int labelCounter=0;
 	ScriptStatus status=STATUS_TOP;
 	std::string nowFunctionName;
 	DataType nowFunctionReturnType;
