@@ -40,8 +40,7 @@ int main(void) {
 	int doWhileCounter=0;
 	int repeatCounter=0;
 	std::stack<ControlInfo> controlStack;
-	std::map<std::string,int> functionList;
-	std::map<std::string,int> globalVariableList;
+	std::map<std::string,int> globalFunctionAndVariableList;
 	std::map<std::string,int> localVariableList;
 	while(!feof(stdin)) {
 		std::string now=stripSpace(stripComment(readOneLine(stdin)));
