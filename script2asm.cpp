@@ -49,11 +49,28 @@ int main(void) {
 		stringPair keywordAndValue=divideKeywordAndValue(now);
 		const std::string& keyword=keywordAndValue.first;
 		const std::string& value=keywordAndValue.second;
-		if(keyword=="function") {
+		if(keyword=="global") {
+		} else if(keyword=="function") {
 		} else if(keyword=="parameters") {
+		} else if(keyword=="variables") {
 		} else if(keyword=="procedure") {
+		} else if(keyword=="assembly") {
 		} else if(keyword=="endfunction") {
+		} else if(keyword=="if") {
+		} else if(keyword=="elseif") {
+		} else if(keyword=="else") {
+		} else if(keyword=="endif") {
+		} else if(keyword=="while") {
+		} else if(keyword=="wend") {
+		} else if(keyword=="do") {
+		} else if(keyword=="dowhile") {
+		} else if(keyword=="repeat") {
+		} else if(keyword=="loop") {
+		} else if(keyword=="continue") {
+		} else if(keyword=="break") {
+		} else if(keyword=="return") {
 		} else {
+			// ˆê”Ê‚ÌŽ®
 		}
 	}
 	return 0;
