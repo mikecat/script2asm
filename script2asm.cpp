@@ -65,6 +65,15 @@ int main(void) {
 			const std::string& keyword=keywordAndValue.first;
 			const std::string& value=keywordAndValue.second;
 			if(keyword=="global") {
+				if(status!=STATUS_TOP) {
+					throw std::string("stray \"global\"");
+				}
+				status=STATUS_GLOBAL_VARIABLE;
+			} else if(keyword=="endglobal") {
+				if(status!=STATUS_GLOBAL_VARIABLE) {
+					throw std::string("stray \"endglobal\"");
+				}
+				status=STATUS_TOP;
 			} else if(keyword=="function") {
 				// ステータスを確認
 				if(status!=STATUS_TOP) {
