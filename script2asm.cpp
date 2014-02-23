@@ -47,8 +47,8 @@ int main(void) {
 		std::string now=stripSpace(stripComment(readOneLine(stdin)));
 		if(now=="")continue;
 		stringPair keywordAndValue=divideKeywordAndValue(now);
-		std::string& keyword=keywordAndValue.first;
-		std::string& value=keywordAndValue.second;
+		const std::string& keyword=keywordAndValue.first;
+		const std::string& value=keywordAndValue.second;
 		if(keyword=="function") {
 		} else if(keyword=="parameters") {
 		} else if(keyword=="procedure") {

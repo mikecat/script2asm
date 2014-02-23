@@ -29,7 +29,7 @@ IncludeVersionInfo=0
 SupportXPThemes=0
 CompilerSet=0
 CompilerSettings=000000a0b0110000000001000
-UnitCount=13
+UnitCount=14
 
 [VersionInfo]
 Major=1
@@ -171,6 +171,16 @@ BuildCmd=
 
 [Unit13]
 FileName=parse_type.h
+CompileCpp=1
+Folder=
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit14]
+FileName=script2asm.h
 CompileCpp=1
 Folder=
 Compile=1
