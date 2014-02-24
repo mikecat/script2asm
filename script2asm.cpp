@@ -51,9 +51,9 @@ int main(void) {
 	// グローバル変数と関数のリスト 
 	std::map<std::string,IdentifierInfo> globalFunctionAndVariableList;
 	// 今変換している関数の情報
-	bool needCommitToList; // この関数の情報をリストに追加するべきか
-	int parameterOffset; // 次の仮引数の%bpからのオフセット
-	int localVariableOffset; // 次のローカル変数の%bpからのオフセット
+	bool needCommitToList=false; // この関数の情報をリストに追加するべきか
+	int parameterOffset=4; // 次の仮引数の%bpからのオフセット
+	int localVariableOffset=0; // 次のローカル変数の%bpからのオフセット
 	std::string nowFunctionName; // 関数名
 	DataType nowFunctionReturnType; // 関数の戻り値の型
 	std::vector<DataType> nowFunctionParameterTypes; // 関数の引数の型リスト
