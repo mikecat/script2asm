@@ -169,6 +169,13 @@ int main(void) {
 		if(commentCounter>0) {
 			throw std::string("comment is unterminated at end of file");
 		}
+		if(status!=STATUS_TOP) {
+			if(status==STATUS_GLOBAL_VARIABLE) {
+				throw std::string("global is unterminated at end of file");
+			} else {
+				throw std::string("function is unterminated at end of file");
+			}
+		}
 	} catch(std::string err) {
 		fprintf(stderr,"Error at line %d : %s\n",lineCounter,err.c_str());
 		return 1;
