@@ -60,12 +60,14 @@ int main(void) {
 	try {
 		while(!feof(stdin)) {
 			lineCounter++;
-			std::string rawLine=readOneLine(inputFile);
-			std::string now=stripSpace(stripComment(rawLine));
-			if(now=="")continue;
+			std::string rawLine=readOneLine(inputFile); // 入力そのままの行
+			std::string now=stripSpace(stripComment(rawLine)); // 前後の空白とコメントを消す
+			if(now=="")continue; // 空行は読み飛ばす
+			// 行頭のキーワードまたは変数名とその後の式に分ける
 			stringPair keywordAndValue=divideKeywordAndValue(now);
 			const std::string& keyword=keywordAndValue.first;
 			const std::string& value=keywordAndValue.second;
+			// まず、複数行コメントの処理を行う
 			if(keyword=="comment") {
 				commentCounter++;
 			} else if(keyword=="endcomment") {
@@ -74,6 +76,7 @@ int main(void) {
 				}
 				commentCounter--;
 			} else if(commentCounter<=0) {
+				// 複数行コメントの中ではない時のみ、処理を行う
 				if(keyword=="global") {
 					if(status!=STATUS_TOP) {
 						throw std::string("stray \"global\"");
