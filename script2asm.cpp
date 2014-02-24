@@ -51,7 +51,9 @@ int main(void) {
 	// グローバル変数と関数のリスト 
 	std::map<std::string,IdentifierInfo> globalFunctionAndVariableList;
 	// 今変換している関数の情報
-	bool needCommitToList=false; // この関数の情報をリストに追加するべきか
+	bool needCommitToList; // この関数の情報をリストに追加するべきか
+	int parameterOffset; // 次の仮引数の%bpからのオフセット
+	int localVariableOffset; // 次のローカル変数の%bpからのオフセット
 	std::string nowFunctionName; // 関数名
 	DataType nowFunctionReturnType; // 関数の戻り値の型
 	std::vector<DataType> nowFunctionParameterTypes; // 関数の引数の型リスト
@@ -119,6 +121,8 @@ int main(void) {
 					nowFunctionReturnType=parseType(functionType);
 					nowFunctionParameterTypes.clear();
 					nowFunctionLocalVariableList.clear();
+					parameterOffset=4;
+					localVariableOffset=0;
 					status=STATUS_FUNCTION_TOP;
 				} else if(keyword=="parameters") {
 				} else if(keyword=="variables") {
@@ -155,13 +159,31 @@ int main(void) {
 									keyword,parseType(value)
 								);
 							break;
-						case STATUS_FUNCTION_PARAMETERS:
-							// 仮引数の宣言
-							// not impremented yet
-							break;
-						case STATUS_FUNCTION_VARIABLES:
-							// ローカル変数の宣言
-							// not impremented yet
+						case STATUS_FUNCTION_PARAMETERS: // 仮引数の宣言
+						case STATUS_FUNCTION_VARIABLES: // ローカル変数の宣言
+							{
+								// 変数名が被っていないかチェックする
+								if(nowFunctionLocalVariableList.count(keyword)!=0) {
+									throw keyword+std::string(" is already defined");
+								}
+								int nowOffset=0;
+								DataType nowType=parseType(value);
+								// オフセットを計算する
+								if(status==STATUS_FUNCTION_PARAMETERS) {
+									nowOffset=parameterOffset;
+									parameterOffset+=nowType.getTypeSize();
+									// ついでに仮引数リストに加える
+									nowFunctionParameterTypes.push_back(nowType);
+								} else {
+									localVariableOffset-=nowType.getTypeSize();
+									nowOffset=localVariableOffset;
+								}
+								// ローカル変数のリストに加える
+								nowFunctionLocalVariableList[keyword]=
+									IdentifierInfo::makeLocalVariable(
+										nowOffset,nowType
+									);
+							}
 							break;
 						case STATUS_FUNCTION_PROCEDURE:
 							// 実際の計算処理
