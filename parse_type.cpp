@@ -52,6 +52,9 @@ DataType parseType(const std::string& typeStr) {
 	std::string typeName("");
 	bool inArraySize=false;
 	unsigned int arrSize=0;
+	if(typeStr=="") {
+		throw std::string("Type name is empty");
+	}
 	for(std::string::size_type i=0;i<len;i++) {
 		if(typeStr.at(i)=='*') {
 			if(inArraySize) {
