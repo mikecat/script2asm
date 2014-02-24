@@ -51,10 +51,11 @@ int main(void) {
 	// グローバル変数と関数のリスト 
 	std::map<std::string,IdentifierInfo> globalFunctionAndVariableList;
 	// 今変換している関数の情報
-	std::string nowFunctionName;
-	DataType nowFunctionReturnType;
-	std::vector<DataType> nowFunctionParameterTypes;
-	std::map<std::string,IdentifierInfo> nowFunctionLocalVariableList;
+	bool needCommitToList=false; // この関数の情報をリストに追加するべきか
+	std::string nowFunctionName; // 関数名
+	DataType nowFunctionReturnType; // 関数の戻り値の型
+	std::vector<DataType> nowFunctionParameterTypes; // 関数の引数の型リスト
+	std::map<std::string,IdentifierInfo> nowFunctionLocalVariableList; // ローカル変数のリスト
 	// フロー制御の階層
 	std::stack<ControlInfo> controlStack;
 	try {
@@ -105,11 +106,13 @@ int main(void) {
 							fprintf(stderr,
 								"Warning at line %d : return type written here is ignored\n",lineCounter);
 						}
+						needCommitToList=false;
 					} else {
 						// 新規関数
 						if(functionType=="") {
 							throw std::string("return type is required");
 						}
+						needCommitToList=true;
 					}
 					// 関数のパラメータの初期化
 					nowFunctionName=functionName;
