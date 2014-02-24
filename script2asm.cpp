@@ -73,7 +73,7 @@ int main(void) {
 			// まず、複数行コメントの処理を行う
 			if(keyword=="comment") {
 				if(value!="") {
-					fprintf(stderr,"Warning at line %d : stray \"%s\" ignored.\n",lineCounter,value.c_str());
+					fprintf(stderr,"Warning at line %d: stray \"%s\" ignored.\n",lineCounter,value.c_str());
 				}
 				commentCounter++;
 			} else if(keyword=="endcomment") {
@@ -81,7 +81,7 @@ int main(void) {
 					throw std::string("stray \"endcomment\"");
 				}
 				if(value!="") {
-					fprintf(stderr,"Warning at line %d : stray \"%s\" ignored.\n",lineCounter,value.c_str());
+					fprintf(stderr,"Warning at line %d: stray \"%s\" ignored.\n",lineCounter,value.c_str());
 				}
 				commentCounter--;
 			} else if(commentCounter<=0) {
@@ -91,7 +91,7 @@ int main(void) {
 						throw std::string("stray \"global\"");
 					}
 					if(value!="") {
-						fprintf(stderr,"Warning at line %d : stray \"%s\" ignored.\n",lineCounter,value.c_str());
+						fprintf(stderr,"Warning at line %d: stray \"%s\" ignored.\n",lineCounter,value.c_str());
 					}
 					status=STATUS_GLOBAL_VARIABLE;
 				} else if(keyword=="endglobal") {
@@ -99,7 +99,7 @@ int main(void) {
 						throw std::string("stray \"endglobal\"");
 					}
 					if(value!="") {
-						fprintf(stderr,"Warning at line %d : stray \"%s\" ignored.\n",lineCounter,value.c_str());
+						fprintf(stderr,"Warning at line %d: stray \"%s\" ignored.\n",lineCounter,value.c_str());
 					}
 					status=STATUS_TOP;
 				} else if(keyword=="function") {
@@ -118,7 +118,7 @@ int main(void) {
 							throw functionName+std::string(" is already defined and not a function");
 						} else if(functionType!="") {
 							fprintf(stderr,
-								"Warning at line %d : return type written here is ignored\n",lineCounter);
+								"Warning at line %d: return type written here is ignored\n",lineCounter);
 						}
 						needCommitToList=false;
 					} else {
@@ -220,7 +220,7 @@ int main(void) {
 			}
 		}
 	} catch(std::string err) {
-		fprintf(stderr,"Error at line %d : %s\n",lineCounter,err.c_str());
+		fprintf(stderr,"Error at line %d: %s\n",lineCounter,err.c_str());
 		return 1;
 	}
 	return 0;
