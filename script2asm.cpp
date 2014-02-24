@@ -139,9 +139,11 @@ int main(void) {
 					switch(status) {
 						case STATUS_TOP:
 						case STATUS_FUNCTION_TOP:
+							// 不正
 							throw std::string("Invalid expression");
 							break;
 						case STATUS_GLOBAL_VARIABLE:
+							// グローバル変数の宣言
 							if(globalFunctionAndVariableList.count(keyword)!=0) {
 								throw keyword+std::string(" is already defined");
 							}
@@ -151,15 +153,19 @@ int main(void) {
 								);
 							break;
 						case STATUS_FUNCTION_PARAMETERS:
+							// 仮引数の宣言
 							// not impremented yet
 							break;
 						case STATUS_FUNCTION_VARIABLES:
+							// ローカル変数の宣言
 							// not impremented yet
 							break;
 						case STATUS_FUNCTION_PROCEDURE:
+							// 実際の計算処理
 							// not impremented yet
 							break;
 						case STATUS_FUNCTION_ASSEMBLY:
+							// 生のアセンブリの出力
 							fputs((rawLine+"\n").c_str(),outputFile);
 							break;
 					}
