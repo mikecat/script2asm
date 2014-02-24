@@ -72,10 +72,16 @@ int main(void) {
 			const std::string& value=keywordAndValue.second;
 			// まず、複数行コメントの処理を行う
 			if(keyword=="comment") {
+				if(value!="") {
+					fprintf(stderr,"Warning at line %d : stray \"%s\" ignored.\n",lineCounter,value.c_str());
+				}
 				commentCounter++;
 			} else if(keyword=="endcomment") {
 				if(commentCounter==0) {
 					throw std::string("stray \"endcomment\"");
+				}
+				if(value!="") {
+					fprintf(stderr,"Warning at line %d : stray \"%s\" ignored.\n",lineCounter,value.c_str());
 				}
 				commentCounter--;
 			} else if(commentCounter<=0) {
@@ -84,10 +90,16 @@ int main(void) {
 					if(status!=STATUS_TOP) {
 						throw std::string("stray \"global\"");
 					}
+					if(value!="") {
+						fprintf(stderr,"Warning at line %d : stray \"%s\" ignored.\n",lineCounter,value.c_str());
+					}
 					status=STATUS_GLOBAL_VARIABLE;
 				} else if(keyword=="endglobal") {
 					if(status!=STATUS_GLOBAL_VARIABLE) {
 						throw std::string("stray \"endglobal\"");
+					}
+					if(value!="") {
+						fprintf(stderr,"Warning at line %d : stray \"%s\" ignored.\n",lineCounter,value.c_str());
 					}
 					status=STATUS_TOP;
 				} else if(keyword=="function") {
