@@ -30,6 +30,24 @@ provided that the following conditions are met:
 #ifndef SCRIPT2ASM_H_GUARD_CE14B8E6_114B_4AE3_9636_1B35B0E190BE
 #define SCRIPT2ASM_H_GUARD_CE14B8E6_114B_4AE3_9636_1B35B0E190BE
 
+#include <cstdio>
+#include <string>
+#include <stack>
+#include <map>
+#include "identifier_info.h"
+#include "data_type.h"
+
+class Script2asmError {
+	private:
+		std::string message;
+		int lineno;
+	public:
+		Script2asmError(): message(""),lineno(0) {}
+		Script2asmError(const std::string& mes,int line): message(mes),lineno(line) {}
+		const std::string& getMessage() const {return message;}
+		int getLineNumber() const {return lineno;}
+};
+
 enum ControlType {
 	TYPE_IF,
 	TYPE_WHILE,
@@ -53,6 +71,41 @@ enum ScriptStatus {
 	STATUS_FUNCTION_VARIABLES,
 	STATUS_FUNCTION_PROCEDURE,
 	STATUS_FUNCTION_ASSEMBLY
+};
+
+class Script2asm {
+	private:
+		// 入出力のファイルポインタ
+		FILE* inputFile;
+		FILE* outputFile;
+		// 今、何行目か
+		int lineCounter;
+		// 複数行コメントのネストレベル 
+		int commentCounter;
+		// 次に使用するラベルの番号
+		int labelCounter;
+		// スクリプトのどこにいるか(トップ、グローバル変数の宣言、関数など)
+		ScriptStatus status;
+		// グローバル変数と関数のリスト 
+		std::map<std::string,IdentifierInfo> globalFunctionAndVariableList;
+		// 今変換している関数の情報
+		bool needCommitToList; // この関数の情報をリストに追加するべきか
+		int parameterOffset; // 次の仮引数の%bpからのオフセット
+		int localVariableOffset; // 次のローカル変数の%bpからのオフセット
+		std::string nowFunctionName; // 関数名
+		DataType nowFunctionReturnType; // 関数の戻り値の型
+		std::vector<DataType> nowFunctionParameterTypes; // 関数の引数の型リスト
+		std::map<std::string,IdentifierInfo> nowFunctionLocalVariableList; // ローカル変数のリスト
+		// フロー制御の階層
+		std::stack<ControlInfo> controlStack;
+
+		void throwError(const std::string& message);
+	public:
+		Script2asm(): inputFile(stdin),outputFile(stdout) {}
+		Script2asm(FILE* in,FILE* out): inputFile(in),outputFile(out) {}
+		void initialize();
+		void workWithOneLine(const std::string& rawLine);
+		void finish();
 };
 
 #endif

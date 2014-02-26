@@ -27,18 +27,51 @@ provided that the following conditions are met:
 3. This notice must be included, unaltered, with any source distribution.
 */
 
-#ifndef READ_ONE_LINE_H_GUARD_9D98F54F_993F_45AC_BEE6_08D49DE8A04B
-#define READ_ONE_LINE_H_GUARD_9D98F54F_993F_45AC_BEE6_08D49DE8A04B
+#include <cctype>
+#include "process_string.h"
 
-#include <cstdio>
-#include <string>
-#include <utility>
+std::string stripComment(const std::string& str) {
+	static const char* commentStrings[]={"//",";","#",NULL};
+	std::string::size_type commentStartPos=str.size();
+	// 一番前にあるコメント開始を表す文字列を探す
+	for(const char** now=commentStrings;*now!=NULL;now++) {
+		std::string::size_type nowPos;
+		nowPos=str.find(*now);
+		if(nowPos!=std::string::npos && nowPos<commentStartPos) {
+			commentStartPos=nowPos;
+		}
+	}
+	return std::string(str.c_str(),commentStartPos);
+}
 
-typedef std::pair<std::string,std::string> stringPair;
+std::string stripSpace(const std::string& str) {
+	std::string::const_iterator start,end,now;
+	bool startedFlag=false;
+	start=str.begin();
+	end=str.begin();
+	for(now=str.begin();now!=str.end();now++) {
+		if(!isspace(*now)) {
+			if(!startedFlag) {
+				start=now;
+				startedFlag=true;
+			}
+			end=now+1;
+		}
+	}
+	std::string res("");
+	res.append(start,end);
+	return res;
+}
 
-std::string readOneLine(FILE* fp);
-std::string stripComment(const std::string& str);
-std::string stripSpace(const std::string& str);
-stringPair divideKeywordAndValue(const std::string& str);
-
-#endif
+stringPair divideKeywordAndValue(const std::string& str) {
+	std::string::const_iterator now;
+	std::string fst(""),snd("");
+	for(now=str.begin();now!=str.end();now++) {
+		if(isspace(*now)) {
+			fst.append(str.begin(),now);
+			snd.append(now,str.end());
+			return stringPair(stripSpace(fst),stripSpace(snd));
+		}
+	}
+	return stringPair(stripSpace(str),std::string(""));
+}

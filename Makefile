@@ -1,6 +1,6 @@
 CXX      = g++
-OBJS     = expr2tree.o read_one_line.o data_type.o identifier_info.o parse_type.o
-BINOBJS  = script2asm.o expr2tree_sa.o
+OBJS     = script2asm.o expr2tree.o process_string.o data_type.o identifier_info.o parse_type.o
+BINOBJS  = main.o expr2tree_sa.o
 BIN      = script2asm.exe expr2tree_sa.exe
 CXXFLAGS = -O2 -std=c++98 -Wall -Wextra -Werror-implicit-function-declaration -finput-charset=cp932 -fexec-charset=cp932
 LDFLAGS  = -s -static
@@ -11,17 +11,20 @@ RM       = rm -f
 
 all: $(BIN)
 
-script2asm.exe: $(OBJS) script2asm.o
-	$(CXX) $(LDFLAGS) -o script2asm.exe $(OBJS) script2asm.o $(LIBS)
+script2asm.exe: $(OBJS) main.o
+	$(CXX) $(LDFLAGS) -o script2asm.exe $(OBJS) main.o $(LIBS)
 
 expr2tree_sa.exe: $(OBJS) expr2tree_sa.o
 	$(CXX) $(LDFLAGS) -o expr2tree_sa.exe $(OBJS) expr2tree_sa.o $(LIBS)
 
+main.o: main.cpp
+	$(CXX) $(CXXFLAGS) -c -o main.o main.cpp
+
 expr2tree.o: expr2tree.cpp
 	$(CXX) $(CXXFLAGS) -c -o expr2tree.o expr2tree.cpp
 
-read_one_line.o: read_one_line.cpp
-	$(CXX) $(CXXFLAGS) -c -o read_one_line.o read_one_line.cpp
+process_string.o: process_string.cpp
+	$(CXX) $(CXXFLAGS) -c -o process_string.o process_string.cpp
 
 script2asm.o: script2asm.cpp
 	$(CXX) $(CXXFLAGS) -c -o script2asm.o script2asm.cpp

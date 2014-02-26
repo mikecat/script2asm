@@ -29,7 +29,7 @@ IncludeVersionInfo=0
 SupportXPThemes=0
 CompilerSet=0
 CompilerSettings=000000a0b0110000000001000
-UnitCount=14
+UnitCount=15
 
 [VersionInfo]
 Major=1
@@ -71,7 +71,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit3]
-FileName=read_one_line.cpp
+FileName=process_string.cpp
 CompileCpp=1
 Folder=script2asm
 Compile=1
@@ -81,7 +81,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit4]
-FileName=read_one_line.h
+FileName=process_string.h
 CompileCpp=1
 Folder=script2asm
 Compile=1
@@ -181,6 +181,16 @@ BuildCmd=
 
 [Unit14]
 FileName=script2asm.h
+CompileCpp=1
+Folder=
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit15]
+FileName=main.cpp
 CompileCpp=1
 Folder=
 Compile=1
