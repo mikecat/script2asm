@@ -100,6 +100,7 @@ class Script2asm {
 		std::stack<ControlInfo> controlStack;
 
 		void throwError(const std::string& message);
+		void printWarning(const std::string& message);
 	public:
 		Script2asm(): inputFile(stdin),outputFile(stdout) {}
 		Script2asm(FILE* in,FILE* out): inputFile(in),outputFile(out) {}

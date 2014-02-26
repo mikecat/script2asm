@@ -35,6 +35,10 @@ void Script2asm::throwError(const std::string& message) {
 	throw Script2asmError(message,lineCounter);
 }
 
+void Script2asm::printWarning(const std::string& message) {
+	fprintf(stderr,"Warning at line %d: %s\n",lineCounter,message.c_str());
+}
+
 void Script2asm::initialize() {
 	// 変数の初期化
 	lineCounter=0;
@@ -64,7 +68,7 @@ void Script2asm::workWithOneLine(const std::string& rawLine) {
 	// まず、複数行コメントの処理を行う
 	if(keyword=="comment") {
 		if(value!="") {
-			fprintf(stderr,"Warning at line %d: stray \"%s\" ignored.\n",lineCounter,value.c_str());
+			printWarning(std::string("stray \"")+value+"\" ignored.");
 		}
 		commentCounter++;
 	} else if(keyword=="endcomment") {
@@ -72,7 +76,7 @@ void Script2asm::workWithOneLine(const std::string& rawLine) {
 			throwError("stray \"endcomment\"");
 		}
 		if(value!="") {
-			fprintf(stderr,"Warning at line %d: stray \"%s\" ignored.\n",lineCounter,value.c_str());
+			printWarning(std::string("stray \"")+value+"\" ignored.");
 		}
 		commentCounter--;
 	} else if(commentCounter<=0) {
@@ -82,7 +86,7 @@ void Script2asm::workWithOneLine(const std::string& rawLine) {
 				throwError("stray \"global\"");
 			}
 			if(value!="") {
-				fprintf(stderr,"Warning at line %d: stray \"%s\" ignored.\n",lineCounter,value.c_str());
+				printWarning(std::string("stray \"")+value+"\" ignored.");
 			}
 			status=STATUS_GLOBAL_VARIABLE;
 		} else if(keyword=="endglobal") {
@@ -90,7 +94,7 @@ void Script2asm::workWithOneLine(const std::string& rawLine) {
 				throwError("stray \"endglobal\"");
 			}
 			if(value!="") {
-				fprintf(stderr,"Warning at line %d: stray \"%s\" ignored.\n",lineCounter,value.c_str());
+				printWarning(std::string("stray \"")+value+"\" ignored.");
 			}
 			status=STATUS_TOP;
 		} else if(keyword=="function") {
@@ -108,8 +112,7 @@ void Script2asm::workWithOneLine(const std::string& rawLine) {
 				getIdentifierType()!=IDENTIFIER_FUNCTION) {
 					throwError(functionName+" is already defined and not a function");
 				} else if(functionType!="") {
-					fprintf(stderr,
-						"Warning at line %d: return type written here is ignored\n",lineCounter);
+					printWarning("return type written here is ignored");
 				}
 				needCommitToList=false;
 			} else {
