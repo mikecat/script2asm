@@ -68,7 +68,7 @@ void Script2asm::workWithOneLine(const std::string& rawLine) {
 	// まず、複数行コメントの処理を行う
 	if(keyword=="comment") {
 		if(value!="") {
-			printWarning(std::string("stray \"")+value+"\" ignored.");
+			printWarning(std::string("stray \"")+value+"\" ignored");
 		}
 		commentCounter++;
 	} else if(keyword=="endcomment") {
@@ -76,7 +76,7 @@ void Script2asm::workWithOneLine(const std::string& rawLine) {
 			throwError("stray \"endcomment\"");
 		}
 		if(value!="") {
-			printWarning(std::string("stray \"")+value+"\" ignored.");
+			printWarning(std::string("stray \"")+value+"\" ignored");
 		}
 		commentCounter--;
 	} else if(commentCounter<=0) {
@@ -86,7 +86,7 @@ void Script2asm::workWithOneLine(const std::string& rawLine) {
 				throwError("stray \"global\"");
 			}
 			if(value!="") {
-				printWarning(std::string("stray \"")+value+"\" ignored.");
+				printWarning(std::string("stray \"")+value+"\" ignored");
 			}
 			status=STATUS_GLOBAL_VARIABLE;
 		} else if(keyword=="endglobal") {
@@ -94,7 +94,7 @@ void Script2asm::workWithOneLine(const std::string& rawLine) {
 				throwError("stray \"endglobal\"");
 			}
 			if(value!="") {
-				printWarning(std::string("stray \"")+value+"\" ignored.");
+				printWarning(std::string("stray \"")+value+"\" ignored");
 			}
 			status=STATUS_TOP;
 		} else if(keyword=="function") {
