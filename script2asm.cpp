@@ -75,136 +75,55 @@ void Script2asm::workWithOneLine(const std::string& rawLine) {
 	} else {
 		// まず、複数行コメントの処理を行う
 		if(keyword=="comment") {
-			if(value!="") {
-				printWarning(std::string("stray \"")+value+"\" ignored");
-			}
-			commentCounter++;
+			processComment(value);
 		} else if(keyword=="endcomment") {
-			if(commentCounter==0) {
-				throwError("stray \"endcomment\"");
-			}
-			if(value!="") {
-				printWarning(std::string("stray \"")+value+"\" ignored");
-			}
-			commentCounter--;
+			processEndcomment(value);
 		} else if(commentCounter<=0) {
 			// 複数行コメントの中ではない時のみ、処理を行う
 			if(keyword=="global") {
-				if(status!=STATUS_TOP) {
-					throwError("stray \"global\"");
-				}
-				if(value!="") {
-					printWarning(std::string("stray \"")+value+"\" ignored");
-				}
-				status=STATUS_GLOBAL_VARIABLE;
+				processGlobal(value);
 			} else if(keyword=="endglobal") {
-				if(status!=STATUS_GLOBAL_VARIABLE) {
-					throwError("stray \"endglobal\"");
-				}
-				if(value!="") {
-					printWarning(std::string("stray \"")+value+"\" ignored");
-				}
-				status=STATUS_TOP;
+				processEndglobal(value);
 			} else if(keyword=="function") {
-				// ステータスを確認
-				if(status!=STATUS_TOP) {
-					throwError("stray \"function\"");
-				}
-				// 関数名と戻り値の型に分ける
-				stringPair functionNameAndType=divideKeywordAndValue(value);
-				const std::string& functionName=functionNameAndType.first;
-				const std::string& functionType=functionNameAndType.second;
-				if(globalFunctionAndVariableList.count(functionName)!=0) {
-					// 既にその関数が存在する: 分割宣言の実装とみなす
-					if(globalFunctionAndVariableList.at(functionName).
-					getIdentifierType()!=IDENTIFIER_FUNCTION) {
-						throwError(functionName+" is already defined and not a function");
-					} else if(functionType!="") {
-						printWarning("return type written here is ignored");
-					}
-					needCommitToList=false;
-				} else {
-					// 新規関数
-					if(functionType=="") {
-						throwError("return type is required");
-					}
-					needCommitToList=true;
-				}
-				// 関数のパラメータの初期化
-				nowFunctionName=functionName;
-				nowFunctionReturnType=parseType(functionType);
-				nowFunctionParameterTypes.clear();
-				nowFunctionLocalVariableList.clear();
-				parameterOffset=4;
-				localVariableOffset=0;
-				status=STATUS_FUNCTION_TOP;
+				processFunction(value);
 			} else if(keyword=="parameters") {
+				processParameters(value);
 			} else if(keyword=="variables") {
+				processVariables(value);
 			} else if(keyword=="procedure") {
+				processProcedure(value);
 			} else if(keyword=="assembly") {
+				processAssembly(value);
 			} else if(keyword=="endfunction") {
+				processEndfunction(value);
 			} else if(keyword=="if") {
+				processIf(value);
 			} else if(keyword=="elseif") {
+				processElseif(value);
 			} else if(keyword=="else") {
+				processElse(value);
 			} else if(keyword=="endif") {
+				processEndif(value);
 			} else if(keyword=="while") {
+				processWhile(value);
 			} else if(keyword=="wend") {
+				processWend(value);
 			} else if(keyword=="do") {
+				processDo(value);
 			} else if(keyword=="dowhile") {
+				processDowhile(value);
 			} else if(keyword=="repeat") {
+				processRepeat(value);
 			} else if(keyword=="loop") {
+				processLoop(value);
 			} else if(keyword=="continue") {
+				processContinue(value);
 			} else if(keyword=="break") {
+				processBreak(value);
 			} else if(keyword=="return") {
+				processReturn(value);
 			} else {
-				switch(status) {
-					case STATUS_TOP:
-					case STATUS_FUNCTION_TOP:
-					case STATUS_FUNCTION_ASSEMBLY: // avoid warning
-						// 不正
-						throwError("Invalid expression");
-						break;
-					case STATUS_GLOBAL_VARIABLE:
-						// グローバル変数の宣言
-						if(globalFunctionAndVariableList.count(keyword)!=0) {
-							throwError(keyword+" is already defined");
-						}
-						globalFunctionAndVariableList[keyword]=
-							IdentifierInfo::makeGlobalVariable(
-								keyword,parseType(value)
-							);
-						break;
-					case STATUS_FUNCTION_PARAMETERS: // 仮引数の宣言
-					case STATUS_FUNCTION_VARIABLES: // ローカル変数の宣言
-						{
-							// 変数名が被っていないかチェックする
-							if(nowFunctionLocalVariableList.count(keyword)!=0) {
-								throwError(keyword+" is already defined");
-							}
-							int nowOffset=0;
-							DataType nowType=parseType(value);
-							// オフセットを計算する
-							if(status==STATUS_FUNCTION_PARAMETERS) {
-								nowOffset=parameterOffset;
-								parameterOffset+=nowType.getTypeSize();
-								// ついでに仮引数リストに加える
-								nowFunctionParameterTypes.push_back(nowType);
-							} else {
-								localVariableOffset-=nowType.getTypeSize();
-								nowOffset=localVariableOffset;
-							}
-							// ローカル変数のリストに加える
-							nowFunctionLocalVariableList[keyword]=
-								IdentifierInfo::makeLocalVariable(
-									nowOffset,nowType
-								);
-						}
-						break;
-					case STATUS_FUNCTION_PROCEDURE:
-						// 実際の計算処理
-						// not impremented yet
-						break;
-				}
+				processPlainExpression(now,keyword,value);
 			}
 		}
 	}
@@ -220,5 +139,183 @@ void Script2asm::finish() {
 		} else {
 			throwError("function is unterminated at end of file");
 		}
+	}
+}
+
+void Script2asm::processComment(const std::string& value) {
+	if(value!="") {
+		printWarning(std::string("stray \"")+value+"\" ignored");
+	}
+	commentCounter++;
+}
+
+void Script2asm::processEndcomment(const std::string& value) {
+	if(commentCounter==0) {
+		throwError("stray \"endcomment\"");
+	}
+	if(value!="") {
+		printWarning(std::string("stray \"")+value+"\" ignored");
+	}
+	commentCounter--;
+}
+
+void Script2asm::processGlobal(const std::string& value) {
+	if(status!=STATUS_TOP) {
+		throwError("stray \"global\"");
+	}
+	if(value!="") {
+		printWarning(std::string("stray \"")+value+"\" ignored");
+	}
+	status=STATUS_GLOBAL_VARIABLE;
+}
+
+void Script2asm::processEndglobal(const std::string& value) {
+	if(status!=STATUS_GLOBAL_VARIABLE) {
+		throwError("stray \"endglobal\"");
+	}
+	if(value!="") {
+		printWarning(std::string("stray \"")+value+"\" ignored");
+	}
+	status=STATUS_TOP;
+}
+
+void Script2asm::processFunction(const std::string& value) {
+	// ステータスを確認
+	if(status!=STATUS_TOP) {
+		throwError("stray \"function\"");
+	}
+	// 関数名と戻り値の型に分ける
+	stringPair functionNameAndType=divideKeywordAndValue(value);
+	const std::string& functionName=functionNameAndType.first;
+	const std::string& functionType=functionNameAndType.second;
+	if(globalFunctionAndVariableList.count(functionName)!=0) {
+		// 既にその関数が存在する: 分割宣言の実装とみなす
+		if(globalFunctionAndVariableList.at(functionName).
+		getIdentifierType()!=IDENTIFIER_FUNCTION) {
+			throwError(functionName+" is already defined and not a function");
+		} else if(functionType!="") {
+			printWarning("return type written here is ignored");
+		}
+		needCommitToList=false;
+	} else {
+		// 新規関数
+		if(functionType=="") {
+			throwError("return type is required");
+		}
+		needCommitToList=true;
+	}
+	// 関数のパラメータの初期化
+	nowFunctionName=functionName;
+	nowFunctionReturnType=parseType(functionType);
+	nowFunctionParameterTypes.clear();
+	nowFunctionLocalVariableList.clear();
+	parameterOffset=4;
+	localVariableOffset=0;
+	status=STATUS_FUNCTION_TOP;
+}
+
+void Script2asm::processParameters(const std::string& value) {
+}
+
+void Script2asm::processVariables(const std::string& value) {
+}
+
+void Script2asm::processProcedure(const std::string& value) {
+}
+
+void Script2asm::processAssembly(const std::string& value) {
+}
+
+void Script2asm::processEndfunction(const std::string& value) {
+}
+
+void Script2asm::processIf(const std::string& value) {
+}
+
+void Script2asm::processElseif(const std::string& value) {
+}
+
+void Script2asm::processElse(const std::string& value) {
+}
+
+void Script2asm::processEndif(const std::string& value) {
+}
+
+void Script2asm::processWhile(const std::string& value) {
+}
+
+void Script2asm::processWend(const std::string& value) {
+}
+
+void Script2asm::processDo(const std::string& value) {
+}
+
+void Script2asm::processDowhile(const std::string& value) {
+}
+
+void Script2asm::processRepeat(const std::string& value) {
+}
+
+void Script2asm::processLoop(const std::string& value) {
+}
+
+void Script2asm::processContinue(const std::string& value) {
+}
+
+void Script2asm::processBreak(const std::string& value) {
+}
+
+void Script2asm::processReturn(const std::string& value) {
+}
+
+void Script2asm::processPlainExpression
+(const std::string& now,const std::string& keyword,const std::string& value) {
+	switch(status) {
+		case STATUS_TOP:
+		case STATUS_FUNCTION_TOP:
+		case STATUS_FUNCTION_ASSEMBLY: // avoid warning
+			// 不正
+			throwError("Invalid expression");
+			break;
+		case STATUS_GLOBAL_VARIABLE:
+			// グローバル変数の宣言
+			if(globalFunctionAndVariableList.count(keyword)!=0) {
+				throwError(keyword+" is already defined");
+			}
+			globalFunctionAndVariableList[keyword]=
+				IdentifierInfo::makeGlobalVariable(
+					keyword,parseType(value)
+				);
+			break;
+		case STATUS_FUNCTION_PARAMETERS: // 仮引数の宣言
+		case STATUS_FUNCTION_VARIABLES: // ローカル変数の宣言
+			{
+				// 変数名が被っていないかチェックする
+				if(nowFunctionLocalVariableList.count(keyword)!=0) {
+					throwError(keyword+" is already defined");
+				}
+				int nowOffset=0;
+				DataType nowType=parseType(value);
+				// オフセットを計算する
+				if(status==STATUS_FUNCTION_PARAMETERS) {
+					nowOffset=parameterOffset;
+					parameterOffset+=nowType.getTypeSize();
+					// ついでに仮引数リストに加える
+					nowFunctionParameterTypes.push_back(nowType);
+				} else {
+					localVariableOffset-=nowType.getTypeSize();
+					nowOffset=localVariableOffset;
+				}
+				// ローカル変数のリストに加える
+				nowFunctionLocalVariableList[keyword]=
+					IdentifierInfo::makeLocalVariable(
+						nowOffset,nowType
+					);
+			}
+			break;
+		case STATUS_FUNCTION_PROCEDURE:
+			// 実際の計算処理
+			// not impremented yet
+			break;
 	}
 }

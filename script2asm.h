@@ -100,8 +100,36 @@ class Script2asm {
 		// フロー制御の階層
 		std::stack<ControlInfo> controlStack;
 
+		// エラー・警告
 		void throwError(const std::string& message);
 		void printWarning(const std::string& message);
+
+		// 各構文に対する処理
+		void processComment(const std::string& value);
+		void processEndcomment(const std::string& value);
+		void processGlobal(const std::string& value);
+		void processEndglobal(const std::string& value);
+		void processFunction(const std::string& value);
+		void processParameters(const std::string& value);
+		void processVariables(const std::string& value);
+		void processProcedure(const std::string& value);
+		void processAssembly(const std::string& value);
+		void processEndfunction(const std::string& value);
+		void processIf(const std::string& value);
+		void processElseif(const std::string& value);
+		void processElse(const std::string& value);
+		void processEndif(const std::string& value);
+		void processWhile(const std::string& value);
+		void processWend(const std::string& value);
+		void processDo(const std::string& value);
+		void processDowhile(const std::string& value);
+		void processRepeat(const std::string& value);
+		void processLoop(const std::string& value);
+		void processContinue(const std::string& value);
+		void processBreak(const std::string& value);
+		void processReturn(const std::string& value);
+		void processPlainExpression(const std::string& now,
+			const std::string& keyword,const std::string& value); // キーワード以外
 	public:
 		Script2asm(): inputFile(stdin),outputFile(stdout),errorFile(stderr) {}
 		Script2asm(FILE* in,FILE* out): inputFile(in),outputFile(out),errorFile(stderr) {}
