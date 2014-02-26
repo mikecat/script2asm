@@ -36,7 +36,7 @@ void Script2asm::throwError(const std::string& message) {
 }
 
 void Script2asm::printWarning(const std::string& message) {
-	fprintf(stderr,"Warning at line %d: %s\n",lineCounter,message.c_str());
+	fprintf(errorFile,"Warning at line %d: %s\n",lineCounter,message.c_str());
 }
 
 void Script2asm::initialize() {

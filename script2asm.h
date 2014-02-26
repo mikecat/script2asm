@@ -78,6 +78,7 @@ class Script2asm {
 		// 入出力のファイルポインタ
 		FILE* inputFile;
 		FILE* outputFile;
+		FILE* errorFile;
 		// 今、何行目か
 		int lineCounter;
 		// 複数行コメントのネストレベル 
@@ -102,8 +103,9 @@ class Script2asm {
 		void throwError(const std::string& message);
 		void printWarning(const std::string& message);
 	public:
-		Script2asm(): inputFile(stdin),outputFile(stdout) {}
-		Script2asm(FILE* in,FILE* out): inputFile(in),outputFile(out) {}
+		Script2asm(): inputFile(stdin),outputFile(stdout),errorFile(stderr) {}
+		Script2asm(FILE* in,FILE* out): inputFile(in),outputFile(out),errorFile(stderr) {}
+		Script2asm(FILE* in,FILE* out,FILE* err): inputFile(in),outputFile(out),errorFile(err) {}
 		void initialize();
 		void workWithOneLine(const std::string& rawLine);
 		void finish();
