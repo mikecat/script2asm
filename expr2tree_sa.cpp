@@ -143,7 +143,7 @@ int main(void) {
 		if(err==SUCCESS) {
 			printExprList(exl);
 		} else {
-			printf("Error %d\n",(int)err);
+			printf("Error: %s\n",getErrorMessage(err).c_str());
 		}
 	}
 	return 0;

@@ -494,4 +494,19 @@ bool doConnect) {
 	return exprStack;
 }
 
+std::string getErrorMessage(const ErrorType& err) {
+	switch(err) {
+		case SUCCESS: return "Success";
+		case ERROR_UNEXPECTED_NUMBER: return "Unexpected number (or equivalent) found";
+		case ERROR_UNEXPECTED_OPERATOR: return "Unexpected operator found";
+		case ERROR_MISSING_NUMBER: return "Needed number (or equivalent) is missing";
+		case ERROR_BRACKET_MISMATCH: return "Bracket mismatch";
+		case ERROR_UNKNOWN_IDENTIFIER: return "Unknown identifier found";
+		case ERROR_INVALID_OPERATOR: return "Invalid operator (or marks) found";
+		case ERROR_UNTERMINATED_STRING: return "String is unterminated";
+		case ERROR_INVALID_CONDITIONAL: return "Invalid conditional operator found";
+	}
+	return "";
+}
+
 }

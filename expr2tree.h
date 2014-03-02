@@ -115,6 +115,7 @@ typedef std::map<std::string,IdentifierInfo> IdentifierMap;
 ExprList expr2tree(
 	ErrorType& error,const std::string& expr,const IdentifierMap& identifiers,
 	bool doConnect=true);
+std::string getErrorMessage(const ErrorType& err);
 
 }
 
