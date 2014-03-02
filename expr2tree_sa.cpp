@@ -40,6 +40,7 @@ void initPrint(void) {
 	op2str[OP_IDENTIFIER]="identifier";
 	op2str[OP_CALL_FUNCTION]="call_function";
 	op2str[OP_ARRAY]="[]";
+	op2str[OP_CONDITIONAL]="{cond,T,F}";
 	op2str[OP_INC_AFTER]="++(after)";
 	op2str[OP_INC_BEFORE]="++(before)";
 	op2str[OP_DEC_AFTER]="++(after)";

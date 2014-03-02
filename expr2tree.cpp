@@ -350,16 +350,18 @@ bool doConnect) {
 				prevIsNumber=true;
 			} else if(!isspace(nowExpr)) {
 				// 演算子
-				if(nowExpr=='(' || nowExpr=='[') {
+				if(nowExpr=='(' || nowExpr=='[' || nowExpr=='{') {
 					// カッコ類をまとめて処理する
 					int ii=i;
 					if(nowExpr=='[' && !prevIsNumber) {
 						throw ERROR_UNEXPECTED_OPERATOR;
+					} else if(nowExpr=='{' && prevIsNumber) {
+						throw ERROR_UNEXPECTED_NUMBER;
 					}
 					std::stack<char> bracketStack;
 					bracketStack.push(nowExpr);
 					for(i++;i<length && !bracketStack.empty();i++) {
-						if(expr[i]=='(' || expr[i]=='[') {
+						if(expr[i]=='(' || expr[i]=='[' || expr[i]=='{') {
 							bracketStack.push(expr[i]);
 						} else if(expr[i]==')') {
 							if(bracketStack.top()!='(') {
@@ -371,13 +373,18 @@ bool doConnect) {
 								throw ERROR_BRACKET_MISMATCH;
 							}
 							bracketStack.pop();
+						} else if(expr[i]=='}') {
+							if(bracketStack.top()!='{') {
+								throw ERROR_BRACKET_MISMATCH;
+							}
+							bracketStack.pop();
 						}
 					}
 					if(!bracketStack.empty())throw ERROR_BRACKET_MISMATCH;
 					ExprList innerExpr;
 					ErrorType nowError;
 					innerExpr=expr2tree(nowError,expr.substr(ii+1,i-ii-2),
-						identifiers,nowExpr!='(' || !prevIsNumber);
+						identifiers,nowExpr!='{' && !(nowExpr=='(' && prevIsNumber));
 					if(nowError!=SUCCESS)throw nowError;
 					if(nowExpr=='(') {
 						if(prevIsNumber) {
@@ -400,7 +407,7 @@ bool doConnect) {
 							}
 							exprStack.push_back(innerExpr[0]);
 						}
-					} else {
+					} else if(nowExpr=='[') {
 						// 配列アクセス
 						if(innerExpr.empty() || exprStack.empty()) {
 							throw ERROR_MISSING_NUMBER;
@@ -409,6 +416,16 @@ bool doConnect) {
 						newNode->childNodes.push_back(exprStack[exprStack.size()-1]);
 						newNode->childNodes.push_back(innerExpr[0]);
 						exprStack.pop_back();
+						exprStack.push_back(newNode);
+					} else {
+						// 条件演算子
+						if(innerExpr.size()!=3) {
+							throw ERROR_INVALID_CONDITIONAL;
+						}
+						ExprNode* newNode=new ExprNode(OP_CONDITIONAL);
+						newNode->childNodes.insert(
+							newNode->childNodes.end(),
+							innerExpr.begin(),innerExpr.end());
 						exprStack.push_back(newNode);
 					}
 					prevIsNumber=true;
