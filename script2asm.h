@@ -76,7 +76,6 @@ enum ScriptStatus {
 class Script2asm {
 	private:
 		// 入出力のファイルポインタ
-		FILE* inputFile;
 		FILE* outputFile;
 		FILE* errorFile;
 		// 今、何行目か
@@ -131,9 +130,9 @@ class Script2asm {
 		void processPlainExpression(const std::string& now,
 			const std::string& keyword,const std::string& value); // キーワード以外
 	public:
-		Script2asm(): inputFile(stdin),outputFile(stdout),errorFile(stderr) {}
-		Script2asm(FILE* in,FILE* out): inputFile(in),outputFile(out),errorFile(stderr) {}
-		Script2asm(FILE* in,FILE* out,FILE* err): inputFile(in),outputFile(out),errorFile(err) {}
+		Script2asm(): outputFile(stdout),errorFile(stderr) {}
+		Script2asm(FILE* out): outputFile(out),errorFile(stderr) {}
+		Script2asm(FILE* out,FILE* err): outputFile(out),errorFile(err) {}
 		void initialize();
 		void workWithOneLine(const std::string& rawLine);
 		void finish();

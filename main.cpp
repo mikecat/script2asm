@@ -45,7 +45,7 @@ int main(int argc,char* argv[]) {
 	FILE* in=stdin;
 	FILE* out=stdout;
 	// TODO: コマンドライン引数の解析
-	Script2asm s2a(in,out,stderr);
+	Script2asm s2a(out,stderr);
 	try {
 		s2a.initialize();
 		while(!feof(in)) {
