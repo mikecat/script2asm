@@ -236,7 +236,11 @@ void Script2asm::processFunction(const std::string& value) {
 	}
 	// 関数のパラメータの初期化
 	nowFunctionName=functionName;
-	nowFunctionReturnType=parseType(functionType);
+	try {
+		nowFunctionReturnType=parseType(functionType);
+	} catch(std::string e) {
+		throwError(e);
+	}
 	nowFunctionParameterTypes.clear();
 	nowFunctionLocalVariableList.clear();
 	parameterOffset=4;
@@ -309,13 +313,19 @@ void Script2asm::processPlainExpression
 			break;
 		case STATUS_GLOBAL_VARIABLE:
 			// グローバル変数の宣言
-			if(globalFunctionAndVariableList.count(keyword)!=0) {
-				throwError(keyword+" is already defined");
+			{
+				if(globalFunctionAndVariableList.count(keyword)!=0) {
+					throwError(keyword+" is already defined");
+				}
+				DataType nowType;
+				try {
+					nowType=parseType(value);
+				} catch(std::string e) {
+					throwError(e);
+				}
+				globalFunctionAndVariableList[keyword]=
+					IdentifierInfo::makeGlobalVariable(keyword,nowType);
 			}
-			globalFunctionAndVariableList[keyword]=
-				IdentifierInfo::makeGlobalVariable(
-					keyword,parseType(value)
-				);
 			break;
 		case STATUS_FUNCTION_PARAMETERS: // 仮引数の宣言
 		case STATUS_FUNCTION_VARIABLES: // ローカル変数の宣言
@@ -325,7 +335,12 @@ void Script2asm::processPlainExpression
 					throwError(keyword+" is already defined");
 				}
 				int nowOffset=0;
-				DataType nowType=parseType(value);
+				DataType nowType;
+				try {
+					nowType=parseType(value);
+				} catch(std::string e) {
+					throwError(e);
+				}
 				// オフセットを計算する
 				if(status==STATUS_FUNCTION_PARAMETERS) {
 					nowOffset=parameterOffset;
