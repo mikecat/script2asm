@@ -31,6 +31,17 @@ provided that the following conditions are met:
 #include "process_string.h"
 #include "script2asm.h"
 
+std::string Script2asm::readOneLine(FILE* fp) {
+	std::string line="";
+	int c;
+	for(;;) {
+		c=fgetc(fp);
+		if(c=='\n' || c==EOF)break;
+		line+=(std::string::value_type)c;
+	}
+	return line;
+}
+
 void Script2asm::throwError(const std::string& message) {
 	throw Script2asmError(message,lineCounter);
 }
@@ -55,6 +66,25 @@ void Script2asm::initialize() {
 	nowFunctionLocalVariableList.clear();
 	controlStack=std::stack<ControlInfo>();
 	// 標準ライブラリの出力
+}
+
+bool Script2asm::workWithOneFile(const std::string& fileName,int level) {
+	FILE* in;
+	if(fileName=="-") {
+		in=stdin;
+	} else {
+		in=fopen(fileName.c_str(),"r");
+		if(in==NULL) {
+			return false;
+		}
+	}
+	std::string nowLine;
+	while(!feof(in)) {
+		nowLine=readOneLine(in);
+		workWithOneLine(nowLine);
+	}
+	if(in!=stdin)fclose(in);
+	return true;
 }
 
 void Script2asm::workWithOneLine(const std::string& rawLine) {

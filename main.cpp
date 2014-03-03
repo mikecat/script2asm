@@ -30,28 +30,13 @@ provided that the following conditions are met:
 #include <cstdio>
 #include "script2asm.h"
 
-std::string readOneLine(FILE* fp) {
-	std::string line="";
-	int c;
-	for(;;) {
-		c=fgetc(fp);
-		if(c=='\n' || c==EOF)break;
-		line+=(std::string::value_type)c;
-	}
-	return line;
-}
-
 int main(int argc,char* argv[]) {
-	FILE* in=stdin;
 	FILE* out=stdout;
 	// TODO: コマンドライン引数の解析
 	Script2asm s2a(out,stderr);
 	try {
 		s2a.initialize();
-		while(!feof(in)) {
-			std::string nowLine=readOneLine(in);
-			s2a.workWithOneLine(nowLine);
-		}
+		s2a.workWithOneFile("-");
 		s2a.finish();
 	} catch(Script2asmError err) {
 		fprintf(stderr,"Error at line %d: %s\n",

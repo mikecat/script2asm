@@ -78,6 +78,8 @@ class Script2asm {
 		// 入出力のファイルポインタ
 		FILE* outputFile;
 		FILE* errorFile;
+		// インクルードのネストレベルの最大値
+		static const int includeLevelMax=10;  
 		// 今、何行目か
 		int lineCounter;
 		// 複数行コメントのネストレベル 
@@ -134,8 +136,11 @@ class Script2asm {
 		Script2asm(FILE* out): outputFile(out),errorFile(stderr) {}
 		Script2asm(FILE* out,FILE* err): outputFile(out),errorFile(err) {}
 		void initialize();
+		bool workWithOneFile(const std::string& fileName,int level=0);
 		void workWithOneLine(const std::string& rawLine);
 		void finish();
+
+		static std::string readOneLine(FILE* fp);
 };
 
 #endif
