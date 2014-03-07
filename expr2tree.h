@@ -113,7 +113,8 @@ struct ExprNode {
 typedef std::map<std::string,IdentifierInfo> IdentifierMap;
 
 ExprList expr2tree(
-	ErrorType& error,const std::string& expr,const IdentifierMap& identifiers,
+	ErrorType& error,const std::string& expr,
+	const IdentifierMap& globalIdentifiers,const IdentifierMap& localIdentifiers,
 	bool doConnect=true);
 std::string getErrorMessage(const ErrorType& err);
 

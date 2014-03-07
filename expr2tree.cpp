@@ -256,7 +256,8 @@ static std::string unescapeString(const std::string& str) {
 }
 
 ExprList expr2tree(
-ErrorType& error,const std::string& expr,const IdentifierMap& identifiers,
+ErrorType& error,const std::string& expr,
+const IdentifierMap& globalIdentifiers,const IdentifierMap& localIdentifiers,
 bool doConnect) {
 	ExprList exprStack;
 	std::stack<OperatorType> operatorStack;
@@ -310,9 +311,14 @@ bool doConnect) {
 				int ii=i;
 				for(;i<length && (isalnum(expr[i]) || expr[i]=='_');i++);
 				nowIdentifier=expr.substr(ii,i-ii);
-				if(identifiers.find(nowIdentifier)!=identifiers.end()) {
+				if(globalIdentifiers.find(nowIdentifier)!=globalIdentifiers.end()) {
 					exprStack.push_back(
-						new ExprNode(OP_IDENTIFIER,identifiers.at(nowIdentifier))
+						new ExprNode(OP_IDENTIFIER,globalIdentifiers.at(nowIdentifier))
+					);
+					prevIsNumber=true;
+				} else if(localIdentifiers.find(nowIdentifier)!=localIdentifiers.end()) {
+					exprStack.push_back(
+						new ExprNode(OP_IDENTIFIER,localIdentifiers.at(nowIdentifier))
 					);
 					prevIsNumber=true;
 				} else {
@@ -384,7 +390,8 @@ bool doConnect) {
 					ExprList innerExpr;
 					ErrorType nowError;
 					innerExpr=expr2tree(nowError,expr.substr(ii+1,i-ii-2),
-						identifiers,nowExpr!='{' && !(nowExpr=='(' && prevIsNumber));
+						globalIdentifiers,localIdentifiers,
+						nowExpr!='{' && !(nowExpr=='(' && prevIsNumber));
 					if(nowError!=SUCCESS)throw nowError;
 					if(nowExpr=='(') {
 						if(prevIsNumber) {

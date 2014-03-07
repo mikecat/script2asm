@@ -112,34 +112,35 @@ void printExprList(const ExprList& exl,int level=0) {
 
 int main(void) {
 	char buffer[10000];
-	IdentifierMap imap;
+	IdentifierMap gmap;
+	IdentifierMap lmap;
 	initPrint();
 	DataType intType=DataType::createInteger(2,true);
 	// グローバル変数
-	imap["hoge"]=IdentifierInfo::makeGlobalVariable("hoge",intType);
-	imap["fuga"]=IdentifierInfo::makeGlobalVariable("fuga",intType);
+	gmap["hoge"]=IdentifierInfo::makeGlobalVariable("hoge",intType);
+	gmap["fuga"]=IdentifierInfo::makeGlobalVariable("fuga",intType);
 	// ローカル変数
-	imap["x"]=IdentifierInfo::makeLocalVariable(-2,intType);
-	imap["y"]=IdentifierInfo::makeLocalVariable(-4,intType);
-	imap["z"]=IdentifierInfo::makeLocalVariable(-6,intType);
-	imap["i"]=IdentifierInfo::makeLocalVariable(-8,intType);
-	imap["ii"]=IdentifierInfo::makeLocalVariable(-10,intType);
+	lmap["x"]=IdentifierInfo::makeLocalVariable(-2,intType);
+	lmap["y"]=IdentifierInfo::makeLocalVariable(-4,intType);
+	lmap["z"]=IdentifierInfo::makeLocalVariable(-6,intType);
+	lmap["i"]=IdentifierInfo::makeLocalVariable(-8,intType);
+	lmap["ii"]=IdentifierInfo::makeLocalVariable(-10,intType);
 	// 引数
-	imap["foo"]=IdentifierInfo::makeLocalVariable(4,intType);
-	imap["bar"]=IdentifierInfo::makeLocalVariable(6,intType);
+	lmap["foo"]=IdentifierInfo::makeLocalVariable(4,intType);
+	lmap["bar"]=IdentifierInfo::makeLocalVariable(6,intType);
 	// 関数
 	std::vector<DataType> dataTypeList;
-	imap["rand"]=IdentifierInfo::makeFunction("rand",intType,dataTypeList);
+	gmap["rand"]=IdentifierInfo::makeFunction("rand",intType,dataTypeList);
 	dataTypeList.push_back(intType);
-	imap["abs"]=IdentifierInfo::makeFunction("abs",intType,dataTypeList);
+	gmap["abs"]=IdentifierInfo::makeFunction("abs",intType,dataTypeList);
 	dataTypeList.push_back(intType);
-	imap["max"]=IdentifierInfo::makeFunction("max",intType,dataTypeList);
-	imap["min"]=IdentifierInfo::makeFunction("min",intType,dataTypeList);
+	gmap["max"]=IdentifierInfo::makeFunction("max",intType,dataTypeList);
+	gmap["min"]=IdentifierInfo::makeFunction("min",intType,dataTypeList);
 
 	while(fgets(buffer,sizeof(buffer),stdin)) {
 		ExprList exl;
 		ErrorType err;
-		exl=expr2tree(err,std::string(buffer),imap);
+		exl=expr2tree(err,std::string(buffer),gmap,lmap);
 		if(err==SUCCESS) {
 			printExprList(exl);
 		} else {
