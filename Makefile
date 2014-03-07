@@ -1,5 +1,5 @@
 CXX      = g++
-OBJS     = script2asm.o expr2tree.o process_string.o parse_type.o data_type.o identifier_info.o
+OBJS     = script2asm.o expr2tree.o process_string.o parse_type.o data_type.o identifier_info.o tree2asm.o
 BINOBJS  = main.o expr2tree_sa.o
 BIN      = script2asm.exe expr2tree_sa.exe
 CXXFLAGS = -O2 -std=c++98 -Wall -Wextra -Werror-implicit-function-declaration -finput-charset=cp932 -fexec-charset=cp932
@@ -40,6 +40,9 @@ data_type.o: data_type.cpp
 
 identifier_info.o: identifier_info.cpp
 	$(CXX) $(CXXFLAGS) -c -o identifier_info.o identifier_info.cpp
+
+tree2asm.o: tree2asm.cpp
+	$(CXX) $(CXXFLAGS) -c -o tree2asm.o tree2asm.cpp
 
 clean:
 	$(RM) $(BIN) $(OBJS) $(BINOBJS)
