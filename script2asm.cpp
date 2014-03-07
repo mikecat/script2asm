@@ -29,6 +29,7 @@ provided that the following conditions are met:
 
 #include "parse_type.h"
 #include "process_string.h"
+#include "expr2tree.h"
 #include "script2asm.h"
 
 std::string Script2asm::readOneLine(FILE* fp) {
@@ -360,7 +361,17 @@ void Script2asm::processPlainExpression
 			break;
 		case STATUS_FUNCTION_PROCEDURE:
 			// é¿ç€ÇÃåvéZèàóù
-			// not impremented yet
+			try {
+				Expr2tree::ErrorType error;
+				Expr2tree::ExprList expr=Expr2tree::expr2tree(error,now,
+					globalFunctionAndVariableList,nowFunctionLocalVariableList);
+				if(error!=Expr2tree::SUCCESS) {
+					throwError(Expr2tree::getErrorMessage(error));
+				}
+				tree2asm(&expr.at(0),outputFile,false,false);
+			} catch(std::string e) {
+				throwError(e);
+			}
 			break;
 	}
 }
