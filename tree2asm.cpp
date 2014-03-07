@@ -29,5 +29,5 @@ provided that the following conditions are met:
 
 #include "tree2asm.h"
 
-DataType tree2asm(const ExprNode* expr,FILE* out,bool expectVariable) {
+DataType tree2asm(const ExprNode* expr,FILE* out,bool expectVariable,bool pleasePush) {
 }

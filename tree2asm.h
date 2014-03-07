@@ -34,6 +34,7 @@ provided that the following conditions are met:
 #include "expr2tree.h"
 #include "script2asm.h"
 
-DataType tree2asm(const ExprNode* expr,FILE* out,bool expectVariable=false);
+DataType tree2asm(const ExprNode* expr,FILE* out,
+	bool expectVariable=false,bool pleasePush=true);
 
 #endif
