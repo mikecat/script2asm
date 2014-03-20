@@ -456,7 +456,7 @@ void Script2asm::processPlainExpression
 		case STATUS_FUNCTION_TOP:
 		case STATUS_FUNCTION_ASSEMBLY: // avoid warning
 			// 不正
-			throwError("Invalid expression");
+			throwError("stray expression");
 			break;
 		case STATUS_GLOBAL_VARIABLE:
 			// グローバル変数の宣言
