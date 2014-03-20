@@ -313,11 +313,14 @@ void Script2asm::processProcedure(const std::string& value) {
 		printWarning(std::string("stray \"")+value+"\" ignored");
 	}
 	commitFunctionToListIfNeeded();
-	status=STATUS_FUNCTION_PROCEDURE;
 	// 関数の実行を開始する処理
 	fprintf(outputFile,"%s:\n",nowFunctionName.c_str());
 	fputs("\tpush %bp\n",outputFile);
-	fprintf(outputFile,"\tsub $%d,%%sp\n",-localVariableOffset);
+	fputs("\tmov %sp,%bp\n",outputFile);
+	if(localVariableOffset<0) {
+		fprintf(outputFile,"\tsub $%d,%%sp\n",-localVariableOffset);
+	}
+	status=STATUS_FUNCTION_PROCEDURE;
 }
 
 void Script2asm::processAssembly(const std::string& value) {
@@ -328,9 +331,9 @@ void Script2asm::processAssembly(const std::string& value) {
 		printWarning(std::string("stray \"")+value+"\" ignored");
 	}
 	commitFunctionToListIfNeeded();
-	status=STATUS_FUNCTION_ASSEMBLY;
 	// 関数の実行を開始する処理
 	fprintf(outputFile,"%s:\n",nowFunctionName.c_str());
+	status=STATUS_FUNCTION_ASSEMBLY;
 }
 
 void Script2asm::processEndfunction(const std::string& value) {
@@ -342,12 +345,16 @@ void Script2asm::processEndfunction(const std::string& value) {
 		printWarning(std::string("stray \"")+value+"\" ignored");
 	}
 	commitFunctionToListIfNeeded();
-	status=STATUS_TOP;
 	// 関数の実行を終了する処理
-	fprintf(outputFile,"___endfunction_%s:\n",nowFunctionName.c_str());
-	fprintf(outputFile,"\tadd $%d,%%sp\n",-localVariableOffset);
-	fputs("\tpop %bp\n",outputFile);
-	fputs("\tretw\n",outputFile);
+	if(status==STATUS_FUNCTION_PROCEDURE) {
+		fprintf(outputFile,"___endfunction_%s:\n",nowFunctionName.c_str());
+		if(localVariableOffset<0) {
+			fprintf(outputFile,"\tadd $%d,%%sp\n",-localVariableOffset);
+		}
+		fputs("\tpop %bp\n",outputFile);
+		fputs("\tretw\n",outputFile);
+	}
+	status=STATUS_TOP;
 }
 
 void Script2asm::processIf(const std::string& value) {
