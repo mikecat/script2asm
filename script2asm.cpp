@@ -194,6 +194,20 @@ void Script2asm::commitFunctionToListIfNeeded() {
 	}
 }
 
+void Script2asm::processExpression(const std::string& expr) {
+	try {
+		Expr2tree::ErrorType error;
+		Expr2tree::ExprList parsedExpr=Expr2tree::expr2tree(error,expr,
+			globalFunctionAndVariableList,nowFunctionLocalVariableList);
+		if(error!=Expr2tree::SUCCESS) {
+			throwError(Expr2tree::getErrorMessage(error));
+		}
+		tree2asm(parsedExpr.at(0),outputFile,false,false);
+	} catch(std::string e) {
+		throwError(e);
+	}
+}
+
 void Script2asm::processComment(const std::string& value) {
 	if(value!="") {
 		printWarning(std::string("stray \"")+value+"\" ignored");
@@ -454,17 +468,7 @@ void Script2asm::processPlainExpression
 			break;
 		case STATUS_FUNCTION_PROCEDURE:
 			// é¿ç€ÇÃåvéZèàóù
-			try {
-				Expr2tree::ErrorType error;
-				Expr2tree::ExprList expr=Expr2tree::expr2tree(error,now,
-					globalFunctionAndVariableList,nowFunctionLocalVariableList);
-				if(error!=Expr2tree::SUCCESS) {
-					throwError(Expr2tree::getErrorMessage(error));
-				}
-				tree2asm(expr.at(0),outputFile,false,false);
-			} catch(std::string e) {
-				throwError(e);
-			}
+			processExpression(now);
 			break;
 	}
 }

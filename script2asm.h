@@ -118,6 +118,8 @@ class Script2asm {
 
 		// 関数の登録
 		void commitFunctionToListIfNeeded();
+		// 計算の実行
+		void processExpression(const std::string& expr);
 
 		// 各構文に対する処理
 		void processComment(const std::string& value);
