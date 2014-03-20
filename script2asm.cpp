@@ -76,7 +76,7 @@ void Script2asm::initialize() {
 void Script2asm::workWithOneFile(const std::string& fileName,int level) {
 	FILE* in;
 	if(level>includeLevelMax) {
-		throwError("too deep include");
+		throwError("include nested too many times");
 	}
 	if(fileName=="-") {
 		in=stdin;
