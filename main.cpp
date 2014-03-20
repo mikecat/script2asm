@@ -39,7 +39,7 @@ int main(int argc,char* argv[]) {
 		s2a.workWithOneFile("-");
 		s2a.finish();
 	} catch(Script2asmError err) {
-		fprintf(stderr,"Error at file \"%s\" line %d:\n%s\n",
+		fprintf(stderr,"Error at file \"%s\" line %d:\n    %s\n",
 			err.getFileName().c_str(),err.getLineNumber(),err.getMessage().c_str());
 		return 1;
 	}
