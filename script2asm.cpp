@@ -184,6 +184,16 @@ void Script2asm::finish() {
 	}
 }
 
+void Script2asm::commitFunctionToListIfNeeded() {
+	if(needCommitToList) {
+		globalFunctionAndVariableList[nowFunctionName]=
+			IdentifierInfo::makeFunction(
+				nowFunctionName,nowFunctionReturnType,nowFunctionParameterTypes
+			);
+		needCommitToList=false;
+	}
+}
+
 void Script2asm::processComment(const std::string& value) {
 	if(value!="") {
 		printWarning(std::string("stray \"")+value+"\" ignored");
@@ -290,6 +300,7 @@ void Script2asm::processVariables(const std::string& value) {
 	if(value!="") {
 		printWarning(std::string("stray \"")+value+"\" ignored");
 	}
+	commitFunctionToListIfNeeded();
 	status=STATUS_FUNCTION_VARIABLES;
 }
 
@@ -301,6 +312,7 @@ void Script2asm::processProcedure(const std::string& value) {
 	if(value!="") {
 		printWarning(std::string("stray \"")+value+"\" ignored");
 	}
+	commitFunctionToListIfNeeded();
 	status=STATUS_FUNCTION_PROCEDURE;
 	// 関数の実行を開始する処理
 	fprintf(outputFile,"%s:\n",nowFunctionName.c_str());
@@ -315,6 +327,7 @@ void Script2asm::processAssembly(const std::string& value) {
 	if(value!="") {
 		printWarning(std::string("stray \"")+value+"\" ignored");
 	}
+	commitFunctionToListIfNeeded();
 	status=STATUS_FUNCTION_ASSEMBLY;
 	// 関数の実行を開始する処理
 	fprintf(outputFile,"%s:\n",nowFunctionName.c_str());
@@ -328,6 +341,7 @@ void Script2asm::processEndfunction(const std::string& value) {
 	if(value!="") {
 		printWarning(std::string("stray \"")+value+"\" ignored");
 	}
+	commitFunctionToListIfNeeded();
 	status=STATUS_TOP;
 	// 関数の実行を終了する処理
 	fprintf(outputFile,"___endfunction_%s:\n",nowFunctionName.c_str());

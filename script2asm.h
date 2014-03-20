@@ -116,6 +116,9 @@ class Script2asm {
 		void throwError(const std::string& message);
 		void printWarning(const std::string& message);
 
+		// ŠÖ”‚Ì“o˜^
+		void commitFunctionToListIfNeeded();
+
 		// Še\•¶‚É‘Î‚·‚éˆ—
 		void processComment(const std::string& value);
 		void processEndcomment(const std::string& value);
