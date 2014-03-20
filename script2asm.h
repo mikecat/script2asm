@@ -79,7 +79,9 @@ class Script2asm {
 		FILE* outputFile;
 		FILE* errorFile;
 		// インクルードのネストレベルの最大値
-		static const int includeLevelMax=10;  
+		static const int includeLevelMax=10; 
+		// インクルードのネストレベル
+		int includeLevel;
 		// 今、何行目か
 		int lineCounter;
 		// 複数行コメントのネストレベル 
@@ -108,6 +110,7 @@ class Script2asm {
 		// 各構文に対する処理
 		void processComment(const std::string& value);
 		void processEndcomment(const std::string& value);
+		void processInclude(const std::string& value);
 		void processGlobal(const std::string& value);
 		void processEndglobal(const std::string& value);
 		void processFunction(const std::string& value);
@@ -136,7 +139,7 @@ class Script2asm {
 		Script2asm(FILE* out): outputFile(out),errorFile(stderr) {}
 		Script2asm(FILE* out,FILE* err): outputFile(out),errorFile(err) {}
 		void initialize();
-		bool workWithOneFile(const std::string& fileName,int level=0);
+		void workWithOneFile(const std::string& fileName,int level=0);
 		void workWithOneLine(const std::string& rawLine);
 		void finish();
 

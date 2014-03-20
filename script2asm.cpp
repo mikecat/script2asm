@@ -31,6 +31,7 @@ provided that the following conditions are met:
 #include "process_string.h"
 #include "expr2tree.h"
 #include "script2asm.h"
+#include "tree2asm.h"
 
 std::string Script2asm::readOneLine(FILE* fp) {
 	std::string line="";
@@ -53,6 +54,7 @@ void Script2asm::printWarning(const std::string& message) {
 
 void Script2asm::initialize() {
 	// 変数の初期化
+	includeLevel=0;
 	lineCounter=0;
 	commentCounter=0;
 	labelCounter=0;
@@ -69,23 +71,27 @@ void Script2asm::initialize() {
 	// 標準ライブラリの出力
 }
 
-bool Script2asm::workWithOneFile(const std::string& fileName,int level) {
+void Script2asm::workWithOneFile(const std::string& fileName,int level) {
 	FILE* in;
+	if(level>includeLevelMax) {
+		throwError("too deep include");
+	}
 	if(fileName=="-") {
 		in=stdin;
 	} else {
 		in=fopen(fileName.c_str(),"r");
 		if(in==NULL) {
-			return false;
+			throwError("include file open failed");
 		}
 	}
+	lineCounter=0;
+	includeLevel=level;
 	std::string nowLine;
 	while(!feof(in)) {
 		nowLine=readOneLine(in);
 		workWithOneLine(nowLine);
 	}
 	if(in!=stdin)fclose(in);
-	return true;
 }
 
 void Script2asm::workWithOneLine(const std::string& rawLine) {
@@ -111,7 +117,9 @@ void Script2asm::workWithOneLine(const std::string& rawLine) {
 			processEndcomment(value);
 		} else if(commentCounter<=0) {
 			// 複数行コメントの中ではない時のみ、処理を行う
-			if(keyword=="global") {
+			if(keyword=="include") {
+				processInclude(value);
+			} else if(keyword=="global") {
 				processGlobal(value);
 			} else if(keyword=="endglobal") {
 				processEndglobal(value);
@@ -188,6 +196,14 @@ void Script2asm::processEndcomment(const std::string& value) {
 		printWarning(std::string("stray \"")+value+"\" ignored");
 	}
 	commentCounter--;
+}
+
+void Script2asm::processInclude(const std::string& value) {
+	int includeLevelBackup=includeLevel;
+	int lineCounterBackup=lineCounter;
+	workWithOneFile(value,includeLevel+1);
+	includeLevel=includeLevelBackup;
+	lineCounter=lineCounterBackup;
 }
 
 void Script2asm::processGlobal(const std::string& value) {
@@ -368,7 +384,7 @@ void Script2asm::processPlainExpression
 				if(error!=Expr2tree::SUCCESS) {
 					throwError(Expr2tree::getErrorMessage(error));
 				}
-				tree2asm(&expr.at(0),outputFile,false,false);
+				tree2asm(expr.at(0),outputFile,false,false);
 			} catch(std::string e) {
 				throwError(e);
 			}
