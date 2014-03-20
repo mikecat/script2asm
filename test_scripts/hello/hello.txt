@@ -1,0 +1,49 @@
+// hello
+
+function putchar_i short
+parameters
+	c short
+assembly
+	push %bp
+	mov %sp,%bp
+	push %bx
+	xor %bx,%bx
+	mov 4(%bp),%ax
+	mov $0x0e,%ah
+	int $0x10
+	xor %ah,%ah
+	pop %bp
+	retw
+endfunction
+
+function putchar short
+parameters
+	c short
+procedure
+	if c=='\r' || c=='\n'
+		putchar_i('\r')
+		putchar_i('\n')
+	else
+		putchar_i(c)
+	endif
+	return c
+endfunction
+
+function main short
+procedure
+	putchar('H')
+	putchar('e')
+	putchar('l')
+	putchar('l')
+	putchar('o')
+	putchar(',')
+	putchar(' ')
+	putchar('W')
+	putchar('o')
+	putchar('r')
+	putchar('l')
+	putchar('d')
+	putchar('!')
+	putchar('\n')
+	return 0
+endfunction
