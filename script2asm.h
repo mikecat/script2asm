@@ -40,11 +40,18 @@ provided that the following conditions are met:
 class Script2asmError {
 	private:
 		std::string message;
+		std::string fileName;
 		int lineno;
 	public:
-		Script2asmError(): message(""),lineno(0) {}
-		Script2asmError(const std::string& mes,int line): message(mes),lineno(line) {}
+		Script2asmError(): message(""),fileName(""),lineno(0) {}
+		Script2asmError(const std::string& mes,int line):
+			message(mes),fileName(""),lineno(line) {}
+		Script2asmError(const std::string& mes,const std::string& fn):
+			message(mes),fileName(fn),lineno(0) {}
+		Script2asmError(const std::string& mes,const std::string& fn,int line):
+			message(mes),fileName(fn),lineno(line) {}
 		const std::string& getMessage() const {return message;}
+		const std::string& getFileName() const {return fileName;}
 		int getLineNumber() const {return lineno;}
 };
 
@@ -82,6 +89,8 @@ class Script2asm {
 		static const int includeLevelMax=10; 
 		// インクルードのネストレベル
 		int includeLevel;
+		// 今処理しているファイルの名前
+		std::string nowFileName;
 		// 今、何行目か
 		int lineCounter;
 		// 複数行コメントのネストレベル 

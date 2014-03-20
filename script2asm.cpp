@@ -45,7 +45,7 @@ std::string Script2asm::readOneLine(FILE* fp) {
 }
 
 void Script2asm::throwError(const std::string& message) {
-	throw Script2asmError(message,lineCounter);
+	throw Script2asmError(message,nowFileName,lineCounter);
 }
 
 void Script2asm::printWarning(const std::string& message) {
@@ -55,6 +55,7 @@ void Script2asm::printWarning(const std::string& message) {
 void Script2asm::initialize() {
 	// 変数の初期化
 	includeLevel=0;
+	nowFileName="";
 	lineCounter=0;
 	commentCounter=0;
 	labelCounter=0;
@@ -86,6 +87,7 @@ void Script2asm::workWithOneFile(const std::string& fileName,int level) {
 	}
 	lineCounter=0;
 	includeLevel=level;
+	nowFileName=fileName;
 	std::string nowLine;
 	while(!feof(in)) {
 		nowLine=readOneLine(in);
@@ -199,11 +201,16 @@ void Script2asm::processEndcomment(const std::string& value) {
 }
 
 void Script2asm::processInclude(const std::string& value) {
+	// ファイルの位置を表す変数を退避
 	int includeLevelBackup=includeLevel;
 	int lineCounterBackup=lineCounter;
+	std::string nowFileNameBackup=nowFileName;
+	// includeされるファイルを処理する
 	workWithOneFile(value,includeLevel+1);
+	// 退避した変数を復帰する
 	includeLevel=includeLevelBackup;
 	lineCounter=lineCounterBackup;
+	nowFileName=nowFileNameBackup;
 }
 
 void Script2asm::processGlobal(const std::string& value) {
