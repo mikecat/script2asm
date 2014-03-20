@@ -47,7 +47,7 @@ class IdentifierInfo {
 		IdentifierType idType;
 		// ローカル変数・引数では%bpからのオフセット
 		// 整数リテラルではその値
-		int intValue; 
+		int intValue;
 		// グローバル変数・関数では名前
 		// 文字列リテラルではその文字列
 		std::string strValue;

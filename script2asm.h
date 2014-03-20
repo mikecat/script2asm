@@ -86,20 +86,20 @@ class Script2asm {
 		FILE* outputFile;
 		FILE* errorFile;
 		// インクルードのネストレベルの最大値
-		static const int includeLevelMax=10; 
+		static const int includeLevelMax=10;
 		// インクルードのネストレベル
 		int includeLevel;
 		// 今処理しているファイルの名前
 		std::string nowFileName;
 		// 今、何行目か
 		int lineCounter;
-		// 複数行コメントのネストレベル 
+		// 複数行コメントのネストレベル
 		int commentCounter;
 		// 次に使用するラベルの番号
 		int labelCounter;
 		// スクリプトのどこにいるか(トップ、グローバル変数の宣言、関数など)
 		ScriptStatus status;
-		// グローバル変数と関数のリスト 
+		// グローバル変数と関数のリスト
 		std::map<std::string,IdentifierInfo> globalFunctionAndVariableList;
 		// 今変換している関数の情報
 		bool needCommitToList; // この関数の情報をリストに追加するべきか
