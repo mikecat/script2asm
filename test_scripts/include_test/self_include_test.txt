@@ -1,0 +1,6 @@
+// self_include_test.txt
+
+comment please warn
+endcomment
+
+include self_include_test.txt
