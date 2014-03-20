@@ -315,7 +315,9 @@ void Script2asm::processAssembly(const std::string& value) {
 	if(value!="") {
 		printWarning(std::string("stray \"")+value+"\" ignored");
 	}
-	status=STATUS_FUNCTION_PROCEDURE;
+	status=STATUS_FUNCTION_ASSEMBLY;
+	// ŠÖ”‚ÌÀs‚ğŠJn‚·‚éˆ—
+	fprintf(outputFile,"%s:\n",nowFunctionName.c_str());
 }
 
 void Script2asm::processEndfunction(const std::string& value) {
