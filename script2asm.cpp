@@ -372,42 +372,81 @@ void Script2asm::processEndfunction(const std::string& value) {
 }
 
 void Script2asm::processIf(const std::string& value) {
+	if(status!=STATUS_FUNCTION_PROCEDURE) {
+		throwError("stray \"if\"");
+	}
 }
 
 void Script2asm::processElseif(const std::string& value) {
+	if(status!=STATUS_FUNCTION_PROCEDURE) {
+		throwError("stray \"elseif\"");
+	}
 }
 
 void Script2asm::processElse(const std::string& value) {
+	if(status!=STATUS_FUNCTION_PROCEDURE) {
+		throwError("stray \"else\"");
+	}
 }
 
 void Script2asm::processEndif(const std::string& value) {
+	if(status!=STATUS_FUNCTION_PROCEDURE) {
+		throwError("stray \"elsif\"");
+	}
 }
 
 void Script2asm::processWhile(const std::string& value) {
+	if(status!=STATUS_FUNCTION_PROCEDURE) {
+		throwError("stray \"while\"");
+	}
 }
 
 void Script2asm::processWend(const std::string& value) {
+	if(status!=STATUS_FUNCTION_PROCEDURE) {
+		throwError("stray \"wend\"");
+	}
 }
 
 void Script2asm::processDo(const std::string& value) {
+	if(status!=STATUS_FUNCTION_PROCEDURE) {
+		throwError("stray \"do\"");
+	}
 }
 
 void Script2asm::processDowhile(const std::string& value) {
+	if(status!=STATUS_FUNCTION_PROCEDURE) {
+		throwError("stray \"dowhile\"");
+	}
 }
 
 void Script2asm::processRepeat(const std::string& value) {
+	if(status!=STATUS_FUNCTION_PROCEDURE) {
+		throwError("stray \"repeat\"");
+	}
 }
 
 void Script2asm::processLoop(const std::string& value) {
+	if(status!=STATUS_FUNCTION_PROCEDURE) {
+		throwError("stray \"loop\"");
+	}
 }
 
 void Script2asm::processContinue(const std::string& value) {
+	if(status!=STATUS_FUNCTION_PROCEDURE) {
+		throwError("stray \"continue\"");
+	}
 }
 
 void Script2asm::processBreak(const std::string& value) {
+	if(status!=STATUS_FUNCTION_PROCEDURE) {
+		throwError("stray \"break\"");
+	}
 }
 
 void Script2asm::processReturn(const std::string& value) {
+	if(status!=STATUS_FUNCTION_PROCEDURE) {
+		throwError("stray \"return\"");
+	}
 }
 
 void Script2asm::processPlainExpression
