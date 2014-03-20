@@ -31,5 +31,10 @@ provided that the following conditions are met:
 
 DataType tree2asm(const Expr2tree::ExprNode* expr,
 FILE* out,bool expectVariable,bool pleasePush) {
-	return DataType();
+	// ‚Æ‚è‚ ‚¦‚¸‰¼ŽÀ‘•
+	fputs("\txor %ax,%ax\n",out);
+	if(pleasePush) {
+		fputs("\tpush %ax\n",out);
+	}
+	return DataType::createInteger(2,true);
 }
