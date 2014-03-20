@@ -1,0 +1,9 @@
+// include_test_main
+
+comment please warn main file 1
+endcomment
+
+include include_test.txt
+
+comment please warn main file 2
+endcomment
