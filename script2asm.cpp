@@ -274,18 +274,57 @@ void Script2asm::processFunction(const std::string& value) {
 }
 
 void Script2asm::processParameters(const std::string& value) {
+	if(status!=STATUS_FUNCTION_TOP) {
+		throwError("stray \"parameters\"");
+	}
+	if(value!="") {
+		printWarning(std::string("stray \"")+value+"\" ignored");
+	}
+	status=STATUS_FUNCTION_PARAMETERS;
 }
 
 void Script2asm::processVariables(const std::string& value) {
+	if(status!=STATUS_FUNCTION_TOP && status!=STATUS_FUNCTION_PARAMETERS) {
+		throwError("stray \"variables\"");
+	}
+	if(value!="") {
+		printWarning(std::string("stray \"")+value+"\" ignored");
+	}
+	status=STATUS_FUNCTION_VARIABLES;
 }
 
 void Script2asm::processProcedure(const std::string& value) {
+	if(status!=STATUS_FUNCTION_TOP && status!=STATUS_FUNCTION_PARAMETERS &&
+	status!=STATUS_FUNCTION_VARIABLES) {
+		throwError("stray \"procecure\"");
+	}
+	if(value!="") {
+		printWarning(std::string("stray \"")+value+"\" ignored");
+	}
+	status=STATUS_FUNCTION_PROCEDURE;
+	// 関数の実行を開始する処理
 }
 
 void Script2asm::processAssembly(const std::string& value) {
+	if(status!=STATUS_FUNCTION_TOP && status!=STATUS_FUNCTION_PARAMETERS) {
+		throwError("stray \"assembly\"");
+	}
+	if(value!="") {
+		printWarning(std::string("stray \"")+value+"\" ignored");
+	}
+	status=STATUS_FUNCTION_PROCEDURE;
 }
 
 void Script2asm::processEndfunction(const std::string& value) {
+	if(status!=STATUS_FUNCTION_TOP && status!=STATUS_FUNCTION_PARAMETERS &&
+	status!=STATUS_FUNCTION_PROCEDURE && status!=STATUS_FUNCTION_ASSEMBLY) {
+		throwError("stray \"endfunction\"");
+	}
+	if(value!="") {
+		printWarning(std::string("stray \"")+value+"\" ignored");
+	}
+	status=STATUS_TOP;
+	// 関数の実行を終了する処理
 }
 
 void Script2asm::processIf(const std::string& value) {
