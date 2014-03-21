@@ -378,5 +378,5 @@ work2
 ___repeat0_start
 	work1
 	jmp ___repeat0_start
-___repeat_end
+___repeat0_end
 	work2
