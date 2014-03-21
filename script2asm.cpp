@@ -313,7 +313,7 @@ void Script2asm::processFunction(const std::string& value) {
 	}
 	nowFunctionParameterTypes.clear();
 	nowFunctionLocalVariableList.clear();
-	parameterOffset=4;
+	parameterOffset=6;
 	localVariableOffset=0;
 	status=STATUS_FUNCTION_TOP;
 }
@@ -351,6 +351,7 @@ void Script2asm::processProcedure(const std::string& value) {
 	// ŠÖ”‚ÌÀs‚ğŠJn‚·‚éˆ—
 	fprintf(outputFile,"%s:\n",nowFunctionName.c_str());
 	fputs("\tpush %bp\n",outputFile);
+	fputs("\tpush %bx\n",outputFile);
 	fputs("\tmov %sp,%bp\n",outputFile);
 	if(localVariableOffset<0) {
 		fprintf(outputFile,"\tsub $%d,%%sp\n",-localVariableOffset);
@@ -405,6 +406,7 @@ void Script2asm::processEndfunction(const std::string& value) {
 		if(localVariableOffset<0) {
 			fprintf(outputFile,"\tadd $%d,%%sp\n",-localVariableOffset);
 		}
+		fputs("\tpop %bx\n",outputFile);
 		fputs("\tpop %bp\n",outputFile);
 		fputs("\tretw\n",outputFile);
 	}
