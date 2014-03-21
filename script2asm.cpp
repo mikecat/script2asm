@@ -447,6 +447,8 @@ void Script2asm::processReturn(const std::string& value) {
 	if(status!=STATUS_FUNCTION_PROCEDURE) {
 		throwError("stray \"return\"");
 	}
+	processExpression(value);
+	fprintf(outputFile,"\tjmp ___endfunction_%s:\n",nowFunctionName.c_str());
 }
 
 void Script2asm::processPlainExpression
