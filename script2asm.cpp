@@ -185,6 +185,12 @@ void Script2asm::finish() {
 	}
 }
 
+unsigned int Script2asm::calculateAlignment(unsigned int size) {
+	unsigned int reft=size%alignmentWidth;
+	if(reft==0)return size;
+	return size+alignmentWidth-reft;
+}
+
 void Script2asm::commitFunctionToListIfNeeded() {
 	if(needCommitToList) {
 		globalFunctionAndVariableList[nowFunctionName]=
@@ -641,11 +647,11 @@ void Script2asm::processPlainExpression
 				// オフセットを計算する
 				if(status==STATUS_FUNCTION_PARAMETERS) {
 					nowOffset=parameterOffset;
-					parameterOffset+=nowType.getTypeSize();
+					parameterOffset+=calculateAlignment(nowType.getTypeSize());
 					// ついでに仮引数リストに加える
 					nowFunctionParameterTypes.push_back(nowType);
 				} else {
-					localVariableOffset-=nowType.getTypeSize();
+					localVariableOffset-=calculateAlignment(nowType.getTypeSize());
 					nowOffset=localVariableOffset;
 				}
 				// ローカル変数のリストに加える

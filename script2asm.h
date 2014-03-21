@@ -86,6 +86,9 @@ enum ScriptStatus {
 
 class Script2asm {
 	private:
+		// アラインメントの大きさ
+		static const int alignmentWidth=2;
+
 		// 入出力のファイルポインタ
 		FILE* outputFile;
 		FILE* errorFile;
@@ -122,6 +125,8 @@ class Script2asm {
 		void throwError(const std::string& message);
 		void printWarning(const std::string& message);
 
+		// アラインメントした結果の計算
+		unsigned int calculateAlignment(unsigned int size);
 		// 関数の登録
 		void commitFunctionToListIfNeeded();
 		// 計算の実行
