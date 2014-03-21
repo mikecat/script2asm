@@ -66,6 +66,12 @@ enum ControlType {
 struct ControlInfo {
 	ControlType type;
 	int count;
+	int ifCount;
+
+	ControlInfo(): type(TYPE_IF),count(0),ifCount(0) {}
+	ControlInfo(const ControlType& t): type(t),count(0),ifCount(0) {}
+	ControlInfo(const ControlType& t,int c): type(t),count(c),ifCount(0) {}
+	ControlInfo(const ControlType& t,int c,int ic): type(t),count(c),ifCount(ic) {}
 };
 
 enum ScriptStatus {
