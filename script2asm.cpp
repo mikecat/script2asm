@@ -461,13 +461,22 @@ void Script2asm::processDo(const std::string& value) {
 	if(value!="") {
 		printWarning(std::string("stray \"")+value+"\" ignored");
 	}
+	fprintf(outputFile,"___dowhile%d_start:\n",labelCounter);
+	controlStack.push(ControlInfo(TYPE_DOWHILE,labelCounter));
+	labelCounter++;
 }
 
 void Script2asm::processDowhile(const std::string& value) {
-	if(status!=STATUS_FUNCTION_PROCEDURE) {
+	if(status!=STATUS_FUNCTION_PROCEDURE ||
+	controlStack.empty() || controlStack.top().type!=TYPE_DOWHILE) {
 		throwError("stray \"dowhile\"");
 	}
+	ControlInfo prevInfo=controlStack.top();
+	controlStack.pop();
+	fprintf(outputFile,"___dowhile%d_continue:\n",prevInfo.count);
 	processExpression(value);
+	fprintf(outputFile,"\tjnz ___dowhile%d_start\n",prevInfo.count);
+	fprintf(outputFile,"___dowhile%d_end:\n",prevInfo.count);
 }
 
 void Script2asm::processRepeat(const std::string& value) {
