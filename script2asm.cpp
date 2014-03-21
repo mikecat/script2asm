@@ -450,7 +450,7 @@ void Script2asm::processWend(const std::string& value) {
 	ControlInfo prevInfo=controlStack.top();
 	controlStack.pop();
 	fprintf(outputFile,"\tjmp ___while%d_start\n",prevInfo.count);
-	fprintf(outputFile,"___while%d_end\n",prevInfo.count);
+	fprintf(outputFile,"___while%d_end:\n",prevInfo.count);
 }
 
 void Script2asm::processDo(const std::string& value) {
