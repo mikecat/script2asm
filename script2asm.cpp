@@ -364,6 +364,25 @@ void Script2asm::processEndfunction(const std::string& value) {
 	commitFunctionToListIfNeeded();
 	// ä÷êîÇÃé¿çsÇèIóπÇ∑ÇÈèàóù
 	if(status==STATUS_FUNCTION_PROCEDURE) {
+		const char* func="";
+		if(!controlStack.empty()) {
+			switch(controlStack.top().type) {
+				case TYPE_IF:
+				case TYPE_ELSE:
+					func="if";
+					break;
+				case TYPE_WHILE:
+					func="while";
+					break;
+				case TYPE_DOWHILE:
+					func="dowhile";
+					break;
+				case TYPE_REPEAT:
+					func="repeat";
+					break;
+			}
+			throwError(std::string("unterminated ")+func+std::string(" at endfunction"));
+		}
 		fprintf(outputFile,"___endfunction_%s:\n",nowFunctionName.c_str());
 		if(localVariableOffset<0) {
 			fprintf(outputFile,"\tadd $%d,%%sp\n",-localVariableOffset);
