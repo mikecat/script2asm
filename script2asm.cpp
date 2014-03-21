@@ -437,6 +437,7 @@ void Script2asm::processWhile(const std::string& value) {
 	fputs("\ttest %ax,%ax\n",outputFile);
 	fprintf(outputFile,"\tjz ___while%d_end\n",labelCounter);
 	controlStack.push(ControlInfo(TYPE_WHILE,labelCounter));
+	labelCounter++;
 }
 
 void Script2asm::processWend(const std::string& value) {
