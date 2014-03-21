@@ -202,6 +202,9 @@ void Script2asm::processExpression(const std::string& expr) {
 		if(error!=Expr2tree::SUCCESS) {
 			throwError(Expr2tree::getErrorMessage(error));
 		}
+		if(parsedExpr.empty()) {
+			throwError("needed expression is missing");
+		}
 		tree2asm(parsedExpr.at(0),outputFile,false,false);
 	} catch(std::string e) {
 		throwError(e);
