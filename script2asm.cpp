@@ -70,6 +70,7 @@ void Script2asm::initialize() {
 	nowFunctionParameterTypes.clear();
 	nowFunctionLocalVariableList.clear();
 	controlStack=std::stack<ControlInfo>();
+	controlStackExceptIf=std::stack<ControlInfo>();
 	// 標準ライブラリの出力
 }
 
@@ -399,7 +400,9 @@ void Script2asm::processIf(const std::string& value) {
 	}
 	processExpression(value);
 	fputs("\ttest %ax,%ax\n",outputFile);
-	fprintf(outputFile,"\tjz ___if%d_label0\n",labelCounter);
+	fprintf(outputFile,"\tjnz ___if%d_skip_label0\n",labelCounter);
+	fprintf(outputFile,"\tjmp ___if%d_label0\n",labelCounter);
+	fprintf(outputFile,"___if%d_skip_label0:\n",labelCounter);
 	controlStack.push(ControlInfo(TYPE_IF,labelCounter,0));
 	labelCounter++;
 }
@@ -415,7 +418,9 @@ void Script2asm::processElseif(const std::string& value) {
 	fprintf(outputFile,"___if%d_label%d:\n",prevInfo.count,prevInfo.ifCount);
 	processExpression(value);
 	fputs("\ttest %ax,%ax\n",outputFile);
-	fprintf(outputFile,"\tjz ___if%d_label%d\n",prevInfo.count,prevInfo.ifCount+1);
+	fprintf(outputFile,"\tjnz ___if%d_skip_label%d\n",prevInfo.count,prevInfo.ifCount+1);
+	fprintf(outputFile,"\tjmp ___if%d_label%d\n",prevInfo.count,prevInfo.ifCount+1);
+	fprintf(outputFile,"___if%d_skip_label%d:\n",prevInfo.count,prevInfo.ifCount+1);
 	controlStack.push(ControlInfo(TYPE_IF,prevInfo.count,prevInfo.ifCount+1));
 }
 
@@ -457,8 +462,12 @@ void Script2asm::processWhile(const std::string& value) {
 	fprintf(outputFile,"___while%d_start:\n",labelCounter);
 	processExpression(value);
 	fputs("\ttest %ax,%ax\n",outputFile);
-	fprintf(outputFile,"\tjz ___while%d_end\n",labelCounter);
-	controlStack.push(ControlInfo(TYPE_WHILE,labelCounter));
+	fprintf(outputFile,"\tjnz ___while%d_go\n",labelCounter);
+	fprintf(outputFile,"\tjmp ___while%d_end\n",labelCounter);
+	fprintf(outputFile,"___while%d_go:\n",labelCounter);
+	ControlInfo nowInfo(TYPE_WHILE,labelCounter);
+	controlStack.push(nowInfo);
+	controlStackExceptIf.push(nowInfo);
 	labelCounter++;
 }
 
@@ -472,6 +481,7 @@ void Script2asm::processWend(const std::string& value) {
 	}
 	ControlInfo prevInfo=controlStack.top();
 	controlStack.pop();
+	controlStackExceptIf.pop();
 	fprintf(outputFile,"\tjmp ___while%d_start\n",prevInfo.count);
 	fprintf(outputFile,"___while%d_end:\n",prevInfo.count);
 }
@@ -484,7 +494,9 @@ void Script2asm::processDo(const std::string& value) {
 		printWarning(std::string("stray \"")+value+"\" ignored");
 	}
 	fprintf(outputFile,"___dowhile%d_start:\n",labelCounter);
-	controlStack.push(ControlInfo(TYPE_DOWHILE,labelCounter));
+	ControlInfo nowInfo(TYPE_DOWHILE,labelCounter);
+	controlStack.push(nowInfo);
+	controlStackExceptIf.push(nowInfo);
 	labelCounter++;
 }
 
@@ -495,9 +507,12 @@ void Script2asm::processDowhile(const std::string& value) {
 	}
 	ControlInfo prevInfo=controlStack.top();
 	controlStack.pop();
+	controlStackExceptIf.pop();
 	fprintf(outputFile,"___dowhile%d_continue:\n",prevInfo.count);
 	processExpression(value);
-	fprintf(outputFile,"\tjnz ___dowhile%d_start\n",prevInfo.count);
+	fputs("\ttest %ax,%ax\n",outputFile);
+	fprintf(outputFile,"\tjz ___dowhile%d_end\n",prevInfo.count);
+	fprintf(outputFile,"\tjmp ___dowhile%d_start\n",prevInfo.count);
 	fprintf(outputFile,"___dowhile%d_end:\n",prevInfo.count);
 }
 
@@ -509,7 +524,9 @@ void Script2asm::processRepeat(const std::string& value) {
 		printWarning(std::string("stray \"")+value+"\" ignored");
 	}
 	fprintf(outputFile,"___repeat%d_start:\n",labelCounter);
-	controlStack.push(ControlInfo(TYPE_REPEAT,labelCounter));
+	ControlInfo nowInfo(TYPE_REPEAT,labelCounter);
+	controlStack.push(nowInfo);
+	controlStackExceptIf.push(nowInfo);
 	labelCounter++;
 }
 
@@ -523,55 +540,54 @@ void Script2asm::processLoop(const std::string& value) {
 	}
 	ControlInfo prevInfo=controlStack.top();
 	controlStack.pop();
+	controlStackExceptIf.pop();
 	fprintf(outputFile,"\tjmp ___repeat%d_start\n",prevInfo.count);
 	fprintf(outputFile,"___repeat%d_end:\n",prevInfo.count);
 }
 
 void Script2asm::processContinue(const std::string& value) {
-	if(status!=STATUS_FUNCTION_PROCEDURE || controlStack.empty() ||
-	controlStack.top().type==TYPE_IF || controlStack.top().type==TYPE_ELSE) {
+	if(status!=STATUS_FUNCTION_PROCEDURE || controlStackExceptIf.empty()) {
 		throwError("stray \"continue\"");
 	}
 	if(value!="") {
 		printWarning(std::string("stray \"")+value+"\" ignored");
 	}
-	switch(controlStack.top().type) {
+	switch(controlStackExceptIf.top().type) {
 		case TYPE_WHILE:
-			fprintf(outputFile,"\tjmp ___while%d_start\n",controlStack.top().count);
+			fprintf(outputFile,"\tjmp ___while%d_start\n",controlStackExceptIf.top().count);
 			break;
 		case TYPE_DOWHILE:
-			fprintf(outputFile,"\tjmp ___dowhile%d_continue\n",controlStack.top().count);
+			fprintf(outputFile,"\tjmp ___dowhile%d_continue\n",controlStackExceptIf.top().count);
 			break;
 		case TYPE_REPEAT:
-			fprintf(outputFile,"\tjmp ___repeat%d_start\n",controlStack.top().count);
+			fprintf(outputFile,"\tjmp ___repeat%d_start\n",controlStackExceptIf.top().count);
 			break;
 		case TYPE_IF:
 		case TYPE_ELSE:
-			; // avoid warning
+			throwError("invalid type for continue");
 	}
 }
 
 void Script2asm::processBreak(const std::string& value) {
-	if(status!=STATUS_FUNCTION_PROCEDURE || controlStack.empty() ||
-	controlStack.top().type==TYPE_IF || controlStack.top().type==TYPE_ELSE) {
+	if(status!=STATUS_FUNCTION_PROCEDURE || controlStackExceptIf.empty()) {
 		throwError("stray \"break\"");
 	}
 	if(value!="") {
 		printWarning(std::string("stray \"")+value+"\" ignored");
 	}
-	switch(controlStack.top().type) {
+	switch(controlStackExceptIf.top().type) {
 		case TYPE_WHILE:
-			fprintf(outputFile,"\tjmp ___while%d_end\n",controlStack.top().count);
+			fprintf(outputFile,"\tjmp ___while%d_end\n",controlStackExceptIf.top().count);
 			break;
 		case TYPE_DOWHILE:
-			fprintf(outputFile,"\tjmp ___dowhile%d_end\n",controlStack.top().count);
+			fprintf(outputFile,"\tjmp ___dowhile%d_end\n",controlStackExceptIf.top().count);
 			break;
 		case TYPE_REPEAT:
-			fprintf(outputFile,"\tjmp ___repeat%d_end\n",controlStack.top().count);
+			fprintf(outputFile,"\tjmp ___repeat%d_end\n",controlStackExceptIf.top().count);
 			break;
 		case TYPE_IF:
 		case TYPE_ELSE:
-			; // avoid warning
+			throwError("invalid type for break");
 	}
 }
 

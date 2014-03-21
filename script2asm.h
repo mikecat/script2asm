@@ -115,6 +115,8 @@ class Script2asm {
 		std::map<std::string,IdentifierInfo> nowFunctionLocalVariableList; // ローカル変数のリスト
 		// フロー制御の階層
 		std::stack<ControlInfo> controlStack;
+		// ifを除くフロー制御の階層(continue/break用)
+		std::stack<ControlInfo> controlStackExceptIf;
 
 		// エラー・警告
 		void throwError(const std::string& message);
