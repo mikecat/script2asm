@@ -432,16 +432,25 @@ void Script2asm::processWhile(const std::string& value) {
 	if(status!=STATUS_FUNCTION_PROCEDURE) {
 		throwError("stray \"while\"");
 	}
+	fprintf(outputFile,"___while%d_start:\n",labelCounter);
 	processExpression(value);
+	fputs("\ttest %ax,%ax\n",outputFile);
+	fprintf(outputFile,"\tjz ___while%d_end\n",labelCounter);
+	controlStack.push(ControlInfo(TYPE_WHILE,labelCounter));
 }
 
 void Script2asm::processWend(const std::string& value) {
-	if(status!=STATUS_FUNCTION_PROCEDURE) {
+	if(status!=STATUS_FUNCTION_PROCEDURE ||
+	controlStack.empty() || controlStack.top().type!=TYPE_WHILE) {
 		throwError("stray \"wend\"");
 	}
 	if(value!="") {
 		printWarning(std::string("stray \"")+value+"\" ignored");
 	}
+	ControlInfo prevInfo=controlStack.top();
+	controlStack.pop();
+	fprintf(outputFile,"\tjmp ___while%d_start\n",prevInfo.count);
+	fprintf(outputFile,"___while%d_end\n",prevInfo.count);
 }
 
 void Script2asm::processDo(const std::string& value) {
