@@ -29,6 +29,69 @@ provided that the following conditions are met:
 
 #include "tree2asm.h"
 
+static void printAxTypeConversionCode(FILE* out,const DataType& from,const DataType& to) {
+	enum ConvertType {
+		CT_INVALID,
+		CT_NONE,
+		CT_2_TO_1,
+		CT_1S_TO_2,
+		CT_1U_TO_2
+	} convert=CT_INVALID;
+	// 変換の種類を取得する
+	if(from.canConsiderAsPointer() && to.canConsiderAsPointer()) {
+		// ポインタ同士の変換なので、何もしない
+		convert=CT_NONE;
+	} else if(!from.canConsiderAsPointer() && to.canConsiderAsPointer()) {
+		// 整数→ポインタ
+		if(from.getTypeSize()==DataType::ptrSize) {
+			convert=CT_NONE;
+		} else if(from.getTypeSize()==1) {
+			if(from.isSigned()) {
+				convert=CT_1S_TO_2;
+			} else {
+				convert=CT_1U_TO_2;
+			}
+		}
+	} else if(from.canConsiderAsPointer() && !to.canConsiderAsPointer()) {
+		// ポインタ→整数
+		if(to.getTypeSize()==DataType::ptrSize) {
+			convert=CT_NONE;
+		} else if(to.getTypeSize()==1) {
+			convert=CT_2_TO_1;
+		}
+	} else {
+		// 整数→整数
+		if(from.getTypeSize()==to.getTypeSize()) {
+			convert=CT_NONE;
+		} else if(from.getTypeSize()==1 && to.getTypeSize()==2) {
+			if(from.isSigned()) {
+				convert=CT_1S_TO_2;
+			} else {
+				convert=CT_1U_TO_2;
+			}
+		} else if(from.getTypeSize()==2 && to.getTypeSize()==1) {
+			convert=CT_2_TO_1;
+		}
+	}
+	// 変換コードを出力する
+	switch(convert) {
+		case CT_INVALID:
+			throw std::string("invalid type conversion");
+		case CT_NONE:
+			// no code
+			break;
+		case CT_2_TO_1:
+			// no code
+			break;
+		case CT_1S_TO_2:
+			fputs("\tcbw\n",out);
+			break;
+		case CT_1U_TO_2:
+			fputs("\txor %ah,%ah\n",out);
+			break;
+	}
+}
+
 DataType tree2asm(const Expr2tree::ExprNode* expr,
 FILE* out,bool expectVariable,bool pleasePush) {
 	// とりあえず仮実装

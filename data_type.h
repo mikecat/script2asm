@@ -43,7 +43,6 @@ class DataType {
 		// 符号付きかどうか
 		bool isSignedFlag;
 
-		static const int ptrSize=2; // ポインタのサイズ
 		// 元となる型のサイズと符号つきかどうかを指定して作成
 		DataType(int size,bool signedFlag):
 			dataSize(size),typeSize(size),isSignedFlag(signedFlag){}
@@ -51,6 +50,8 @@ class DataType {
 		DataType(const DataType& dt,unsigned int acInfo);
 
 	public:
+		static const int ptrSize=2; // ポインタのサイズ
+
 		// とりあえず作成
 		DataType():dataSize(0),typeSize(0),isSignedFlag(true){}
 		// コピーコンストラクタ
