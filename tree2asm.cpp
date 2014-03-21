@@ -94,10 +94,101 @@ static void printAxTypeConversionCode(FILE* out,const DataType& from,const DataT
 
 DataType tree2asm(const Expr2tree::ExprNode* expr,
 FILE* out,bool expectVariable,bool pleasePush) {
-	// ‚Æ‚è‚ ‚¦‚¸‰¼ŽÀ‘•
-	fputs("\txor %ax,%ax\n",out);
+	DataType returnType;
+	switch(expr->opType) {
+		case Expr2tree::OP_INVALID:
+			throw std::string("invalid operator on tree");
+		case Expr2tree::OP_IDENTIFIER:
+			break;
+		case Expr2tree::OP_CALL_FUNCTION:
+			break;
+		case Expr2tree::OP_ARRAY:
+			break;
+		case Expr2tree::OP_CONDITIONAL:
+			break;
+		case Expr2tree::OP_INC_AFTER:
+			break;
+		case Expr2tree::OP_INC_BEFORE:
+			break;
+		case Expr2tree::OP_DEC_AFTER:
+			break;
+		case Expr2tree::OP_DEC_BEFORE:
+			break;
+		case Expr2tree::OP_READADDR:
+			break;
+		case Expr2tree::OP_GETADDR:
+			break;
+		case Expr2tree::OP_PLUS:
+			break;
+		case Expr2tree::OP_MINUS:
+			break;
+		case Expr2tree::OP_BIT_NOT:
+			break;
+		case Expr2tree::OP_LOGIC_NOT:
+			break;
+		case Expr2tree::OP_MUL:
+			break;
+		case Expr2tree::OP_DIV:
+			break;
+		case Expr2tree::OP_MOD:
+			break;
+		case Expr2tree::OP_ADD:
+			break;
+		case Expr2tree::OP_SUB:
+			break;
+		case Expr2tree::OP_LSHIFT:
+			break;
+		case Expr2tree::OP_RSHIFT:
+			break;
+		case Expr2tree::OP_SMALLER:
+			break;
+		case Expr2tree::OP_BIGGER:
+			break;
+		case Expr2tree::OP_SMALLER_EQUAL:
+			break;
+		case Expr2tree::OP_BIGGER_EQUAL:
+			break;
+		case Expr2tree::OP_EQUAL:
+			break;
+		case Expr2tree::OP_NOT_EQUAL:
+			break;
+		case Expr2tree::OP_BIT_AND:
+			break;
+		case Expr2tree::OP_BIT_XOR:
+			break;
+		case Expr2tree::OP_BIT_OR:
+			break;
+		case Expr2tree::OP_LOGIC_AND:
+			break;
+		case Expr2tree::OP_LOGIC_OR:
+			break;
+		case Expr2tree::OP_ASSIGN:
+			break;
+		case Expr2tree::OP_MUL_ASSIGN:
+			break;
+		case Expr2tree::OP_DIV_ASSIGN:
+			break;
+		case Expr2tree::OP_MOD_ASSIGN:
+			break;
+		case Expr2tree::OP_ADD_ASSIGN:
+			break;
+		case Expr2tree::OP_SUB_ASSIGN:
+			break;
+		case Expr2tree::OP_LSHIFT_ASSIGN:
+			break;
+		case Expr2tree::OP_RSHIFT_ASSIGN:
+			break;
+		case Expr2tree::OP_AND_ASSIGN:
+			break;
+		case Expr2tree::OP_XOR_ASSIGN:
+			break;
+		case Expr2tree::OP_OR_ASSIGN:
+			break;
+		case Expr2tree::OP_CONNECT:
+			break;
+	}
 	if(pleasePush) {
 		fputs("\tpush %ax\n",out);
 	}
-	return DataType::createInteger(2,true);
+	return returnType;
 }
