@@ -375,35 +375,72 @@ void Script2asm::processIf(const std::string& value) {
 	if(status!=STATUS_FUNCTION_PROCEDURE) {
 		throwError("stray \"if\"");
 	}
+	processExpression(value);
+	fputs("\ttest %ax,%ax\n",outputFile);
+	fprintf(outputFile,"\tjz ___if%d_label0\n",labelCounter);
+	controlStack.push(ControlInfo(TYPE_IF,labelCounter,0));
+	labelCounter++;
 }
 
 void Script2asm::processElseif(const std::string& value) {
-	if(status!=STATUS_FUNCTION_PROCEDURE) {
+	if(status!=STATUS_FUNCTION_PROCEDURE ||
+	controlStack.empty() || controlStack.top().type!=TYPE_IF) {
 		throwError("stray \"elseif\"");
 	}
+	ControlInfo prevInfo=controlStack.top();
+	controlStack.pop();
+	fprintf(outputFile,"\tjmp ___if%d_end\n",prevInfo.count);
+	fprintf(outputFile,"___if%d_label%d:\n",prevInfo.count,prevInfo.ifCount);
+	processExpression(value);
+	fputs("\ttest %ax,%ax\n",outputFile);
+	fprintf(outputFile,"\tjz ___if%d_label%d\n",prevInfo.count,prevInfo.ifCount+1);
+	controlStack.push(ControlInfo(TYPE_IF,prevInfo.count,prevInfo.ifCount+1));
 }
 
 void Script2asm::processElse(const std::string& value) {
-	if(status!=STATUS_FUNCTION_PROCEDURE) {
+	if(status!=STATUS_FUNCTION_PROCEDURE ||
+	controlStack.empty() || controlStack.top().type!=TYPE_IF) {
 		throwError("stray \"else\"");
 	}
+	if(value!="") {
+		printWarning(std::string("stray \"")+value+"\" ignored");
+	}
+	ControlInfo prevInfo=controlStack.top();
+	controlStack.pop();
+	fprintf(outputFile,"\tjmp ___if%d_end\n",prevInfo.count);
+	fprintf(outputFile,"___if%d_label%d:\n",prevInfo.count,prevInfo.ifCount);
+	controlStack.push(ControlInfo(TYPE_ELSE,prevInfo.count,prevInfo.ifCount));
 }
 
 void Script2asm::processEndif(const std::string& value) {
-	if(status!=STATUS_FUNCTION_PROCEDURE) {
+	if(status!=STATUS_FUNCTION_PROCEDURE || controlStack.empty() ||
+	(controlStack.top().type!=TYPE_IF && controlStack.top().type!=TYPE_ELSE)) {
 		throwError("stray \"elsif\"");
 	}
+	if(value!="") {
+		printWarning(std::string("stray \"")+value+"\" ignored");
+	}
+	ControlInfo prevInfo=controlStack.top();
+	controlStack.pop();
+	if(prevInfo.type==TYPE_IF) {
+		fprintf(outputFile,"___if%d_label%d:\n",prevInfo.count,prevInfo.ifCount);
+	}
+	fprintf(outputFile,"___if%d_end:\n",prevInfo.count);
 }
 
 void Script2asm::processWhile(const std::string& value) {
 	if(status!=STATUS_FUNCTION_PROCEDURE) {
 		throwError("stray \"while\"");
 	}
+	processExpression(value);
 }
 
 void Script2asm::processWend(const std::string& value) {
 	if(status!=STATUS_FUNCTION_PROCEDURE) {
 		throwError("stray \"wend\"");
+	}
+	if(value!="") {
+		printWarning(std::string("stray \"")+value+"\" ignored");
 	}
 }
 
@@ -411,17 +448,24 @@ void Script2asm::processDo(const std::string& value) {
 	if(status!=STATUS_FUNCTION_PROCEDURE) {
 		throwError("stray \"do\"");
 	}
+	if(value!="") {
+		printWarning(std::string("stray \"")+value+"\" ignored");
+	}
 }
 
 void Script2asm::processDowhile(const std::string& value) {
 	if(status!=STATUS_FUNCTION_PROCEDURE) {
 		throwError("stray \"dowhile\"");
 	}
+	processExpression(value);
 }
 
 void Script2asm::processRepeat(const std::string& value) {
 	if(status!=STATUS_FUNCTION_PROCEDURE) {
 		throwError("stray \"repeat\"");
+	}
+	if(value!="") {
+		printWarning(std::string("stray \"")+value+"\" ignored");
 	}
 }
 
@@ -429,17 +473,26 @@ void Script2asm::processLoop(const std::string& value) {
 	if(status!=STATUS_FUNCTION_PROCEDURE) {
 		throwError("stray \"loop\"");
 	}
+	if(value!="") {
+		printWarning(std::string("stray \"")+value+"\" ignored");
+	}
 }
 
 void Script2asm::processContinue(const std::string& value) {
 	if(status!=STATUS_FUNCTION_PROCEDURE) {
 		throwError("stray \"continue\"");
 	}
+	if(value!="") {
+		printWarning(std::string("stray \"")+value+"\" ignored");
+	}
 }
 
 void Script2asm::processBreak(const std::string& value) {
 	if(status!=STATUS_FUNCTION_PROCEDURE) {
 		throwError("stray \"break\"");
+	}
+	if(value!="") {
+		printWarning(std::string("stray \"")+value+"\" ignored");
 	}
 }
 
