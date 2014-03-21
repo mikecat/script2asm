@@ -5,10 +5,10 @@ parameters
 	c short
 assembly
 	push %bp
-	mov %sp,%bp
 	push %bx
+	mov %sp,%bp
 	xor %bx,%bx
-	mov 4(%bp),%ax
+	mov 6(%bp),%ax
 	mov $0x0e,%ah
 	int $0x10
 	xor %ah,%ah
