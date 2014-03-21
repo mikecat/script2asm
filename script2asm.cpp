@@ -486,15 +486,23 @@ void Script2asm::processRepeat(const std::string& value) {
 	if(value!="") {
 		printWarning(std::string("stray \"")+value+"\" ignored");
 	}
+	fprintf(outputFile,"___repeat%d_start:\n",labelCounter);
+	controlStack.push(ControlInfo(TYPE_REPEAT,labelCounter));
+	labelCounter++;
 }
 
 void Script2asm::processLoop(const std::string& value) {
-	if(status!=STATUS_FUNCTION_PROCEDURE) {
+	if(status!=STATUS_FUNCTION_PROCEDURE ||
+	controlStack.empty() || controlStack.top().type!=TYPE_REPEAT) {
 		throwError("stray \"loop\"");
 	}
 	if(value!="") {
 		printWarning(std::string("stray \"")+value+"\" ignored");
 	}
+	ControlInfo prevInfo=controlStack.top();
+	controlStack.pop();
+	fprintf(outputFile,"\tjmp ___repeat%d_start\n",prevInfo.count);
+	fprintf(outputFile,"___repeat%d_end:\n",prevInfo.count);
 }
 
 void Script2asm::processContinue(const std::string& value) {
