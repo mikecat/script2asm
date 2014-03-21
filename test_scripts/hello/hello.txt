@@ -12,6 +12,7 @@ assembly
 	mov $0x0e,%ah
 	int $0x10
 	xor %ah,%ah
+	pop %bx
 	pop %bp
 	retw
 endfunction
