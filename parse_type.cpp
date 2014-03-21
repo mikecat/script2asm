@@ -85,7 +85,13 @@ DataType parseType(const std::string& typeStr) {
 	}
 	initTypeList();
 	if(typeList.find(typeName)!=typeList.end()) {
-		return typeList.at(typeName);
+		DataType returnType=typeList.at(typeName);
+		for(std::vector<unsigned int>::reverse_iterator it=accessInfo.rbegin();
+		it!=accessInfo.rend();it++) {
+			if(*it==0)returnType=DataType::createPointer(returnType);
+			else returnType=DataType::createArray(returnType,*it);
+		}
+		return returnType;
 	} else {
 		throw std::string("Invalid type name!");
 	}
