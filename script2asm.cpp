@@ -72,6 +72,16 @@ void Script2asm::initialize() {
 	controlStack=std::stack<ControlInfo>();
 	controlStackExceptIf=std::stack<ControlInfo>();
 	// 標準ライブラリの出力
+	fputs(
+		".code16gcc\n"
+		".org 0x0500\n"
+		".global ___start\n"
+		"___start:\n"
+		"\tcallw main\n"
+		"___hltloop:\n"
+		"\thlt\n"
+		"\tjmp ___hltloop\n"
+	,outputFile);
 }
 
 void Script2asm::workWithOneFile(const std::string& fileName,int level) {
