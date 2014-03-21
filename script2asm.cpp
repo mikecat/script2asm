@@ -520,7 +520,7 @@ void Script2asm::processReturn(const std::string& value) {
 		throwError("stray \"return\"");
 	}
 	processExpression(value);
-	fprintf(outputFile,"\tjmp ___endfunction_%s:\n",nowFunctionName.c_str());
+	fprintf(outputFile,"\tjmp ___endfunction_%s\n",nowFunctionName.c_str());
 }
 
 void Script2asm::processPlainExpression
